@@ -22,6 +22,6 @@ for filename in os.listdir(read_path):
         for slices in range(data.shape[2]):
             slice_name = 'P' + str(patient + 1) + '_' + str(slices + 1) + format
             slice_path = write_path + slice_name
-            data_color = data[:,:,slices]
+            data_color = (((data[:,:,slices] - data[:,:,slices].min()) / (data[:,:,slices].max() - data[:,:,slices].min())) * 255.9).astype(np.uint8)
             Image.fromarray(data_color).save(slice_path)
             print(slice_name)
