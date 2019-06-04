@@ -10,8 +10,8 @@ user = input("Write your username")
 
 #Define folders and variable patient
 #These paths are just example paths
-read_path ='/Users/+ user +/Desktop/Task01_BrainTumour/imagesTs/'
-write_path ='/Users/+ user +/Desktop/CleanSlices/imagesTs/'
+read_path ='/Users/' + user + '/Desktop/Task01_BrainTumour/imagesTs/'
+write_path ='/Users/' + user + '/Desktop/CleanSlices/imagesTs/'
 patient = 0
 
 #Iterate through the items in the folder, read data, get data, slice it, decide a name convention and save it

@@ -10,10 +10,11 @@ user = input("Write your username")
 
 #Define folders and variable patient
 #These paths are just example paths
-read_path ='/Users/'+ user +'/Desktop/Task01_BrainTumour/labelsTr/'
-write_path ='/Users/'+ user +'/Desktop/CleanSlices/labelsTr/'
+read_path ='/Users/' + user + '/Desktop/Task01_BrainTumour/labelsTr/'
+write_path ='/Users/' + user + '/Desktop/CleanSlices/labelsTr/'
 patient = 0
 
+#Iterate through the items in the folder, read data, get data, slice it, decide a name convention and save it
 for filename in os.listdir(read_path):
     if filename.endswith("nii.gz"):
         nii_image = nib.load(read_path+ str(filename))
