@@ -6,12 +6,12 @@ import numpy as np
 
 format = input("write desired output format, for instance: '.jpg'")
 if len(format) < 1 : format = '.png'
-
+user=input("Write your username")
 
 #Define folders and variable patient
 #These paths are just example paths
-read_path ='/Users/aitorjara/Desktop/Task01_BrainTumour/labelsTr/'
-write_path ='/Users/aitorjara/Desktop/CleanSlices/labelsTr/'
+read_path ='/Users/'+user+'/Desktop/Task01_BrainTumour/labelsTr/'
+write_path ='/Users/'+user+'/Desktop/CleanSlices/labelsTr/'
 patient = 0
 
 for filename in os.listdir(read_path):
