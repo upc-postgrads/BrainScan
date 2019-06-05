@@ -40,7 +40,7 @@ def Convert_Images(path_images,path_converted_images,mode):
                 for slices in range(data.shape[2]):
                     slice_name = 'P'+str(patient)+'_'+str(slices+1)+'.png'
                     slice_path = path_converted_images+'/'+slice_name
-                    data_gray = (((data[:,:,slices]-data[:,:,slices].min()) / (data[:,:,slices].max()-data[:,:,slices].min()))*255.9).astype(np.uint8)
+                    data_gray = data[:,:,slices].astype(np.uint8)
                     Image.fromarray(data_gray).save(slice_path)
 
     else:
