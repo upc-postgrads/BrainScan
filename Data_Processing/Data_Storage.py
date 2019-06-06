@@ -12,8 +12,8 @@ slice = 0
 slices = 155
 read_path = '/Users/aitorjara/Desktop/Task01_BrainTumour/imagesTr/' #Indicar path
 write_path = '/Users/aitorjara/Desktop/CleanSlices/imagesTr/'       #Indicar path
-mode = 'train'#input("Indica 'train', 'test' o 'labels': ")
-format = '.png' #input("Indica format, exemple: '.jpg' ")
+mode = input("Indica 'train', 'test' o 'labels': ")
+format = input("Indica format, exemple: '.jpg' ")
 
 def read_data(read_path):
     for filename in os.listdir(read_path):
