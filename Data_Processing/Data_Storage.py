@@ -10,8 +10,8 @@ contrast = 0
 contrasts = 4
 slice = 0
 slices = 155
-read_path = '/Users/aitorjara/Desktop/Task01_BrainTumour/imagesTr/' #Indicar path
-write_path = '/Users/aitorjara/Desktop/CleanSlices/imagesTr/'       #Indicar path
+read_path = '/home/eddie/Desktop/BrainScan/BrainTumour/imagesTsLittle/' #Indicar path
+write_path = '/home/eddie/Desktop/BrainScan/SlicedDataset/imagesTsLittle/'       #Indicar path
 mode = input("Indica 'train', 'test' o 'labels': ")
 format = input("Indica format, exemple: '.jpg' ")
 

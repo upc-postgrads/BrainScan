@@ -31,7 +31,7 @@ def Convert_Images(path_images,path_converted_images,mode):
 
 
     if mode == 'label':
-        for filename in os.listdir(path_images.replace('/','\\')):
+        for filename in os.listdir(path_images):
             if filename.startswith("B"):
                 patient += 1
                 file_path=path_images+'/'+filename
@@ -44,7 +44,7 @@ def Convert_Images(path_images,path_converted_images,mode):
                     Image.fromarray(data_gray).save(slice_path)
 
     else:
-        for filename in os.listdir(path_images.replace('/','\\')):
+        for filename in os.listdir(path_images):
             if filename.startswith("B"):
                 patient += 1
                 file_path=path_images+'/'+filename
