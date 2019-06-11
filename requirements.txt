@@ -27,3 +27,4 @@ matplotlib==3.1.0
 pillow==6.0.0
 ipykernel==5.1.1 #need to run this: ipython kernel install --user --name=env
 glob3==0.0.1
+imageio=2.5.0
