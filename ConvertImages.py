@@ -34,7 +34,7 @@ class Convert_Images():
 
 
         if mode == 'label':
-            for filename in os.listdir(path_images.replace('/','\\')):
+            for filename in os.listdir(path_images):
                 if filename.startswith("B"):
                     patient += 1
                     file_path=path_images+'/'+filename
@@ -45,9 +45,10 @@ class Convert_Images():
                         slice_path = path_converted_images+'/'+slice_name
                         data_gray = data[:,:,slices].astype(np.uint8)
                         Image.fromarray(data_gray).save(slice_path)
+                        print(slice_name)
 
         else:
-            for filename in os.listdir(path_images.replace('/','\\')):
+            for filename in os.listdir(path_images):
                 if filename.startswith("B"):
                     patient += 1
                     file_path=path_images+'/'+filename
@@ -59,6 +60,7 @@ class Convert_Images():
                             slice_path = path_converted_images+'/'+slice_name
                             data_gray = (((data[:,:,slices,contrast]-data[:,:,slices,contrast].min()) / (data[:,:,slices,contrast].max()-data[:,:,slices,contrast].min()))*255.9).astype(np.uint8)
                             Image.fromarray(data_gray).save(slice_path)
+                            print(slice_name)
 
 
     def Validation(path_tr,path_label,path_converted_tr,path_converted_label,path_val,path_val_label,num_val=48):
@@ -78,7 +80,7 @@ class Convert_Images():
 
         patient = 0
         #training images
-        for filename_training in os.listdir(path_tr.replace('/','\\')):
+        for filename_training in os.listdir(path_tr):
             if filename_training.startswith("B"):
                 patient += 1
                 file_path=path_tr+'/'+filename_training
@@ -101,7 +103,7 @@ class Convert_Images():
 
         patient = 0
         #labels
-        for filename_label in os.listdir(path_label.replace('/','\\')):
+        for filename_label in os.listdir(path_label):
             if filename_label.startswith("B"):
                 patient += 1
                 file_path=path_label+'/'+filename_label
@@ -124,15 +126,15 @@ class Convert_Images():
 
 
 #Convert testing images
-path_images = 'BrainTumour/imagesTs'
-path_converted_images = 'SlicedDataset/imagesTs'
-Convert_Images.Convert(path_images,path_converted_images,'testing')
+path_images = '/Users/aitorjara/Desktop/Task01_BrainTumour/imagesTs'
+path_converted_images = '/Users/aitorjara/Desktop/CleanSlices/imagesTs'
+Convert_Images.Convert(path_images,path_converted_images, mode ='testing')
 
 #Convert training and labels keeping 48 random patients for validation
-path_tr = 'BrainTumour/imagesTr'
-path_label = 'BrainTumour/labelsTr'
-path_converted_tr = 'SlicedDataset/imagesTr'
-path_converted_label = 'SlicedDataset/labelsTr'
-path_val = 'SlicedDataset/imagesVal'
-path_val_label = 'SlicedDataset/labelsVal'
-Convert_Images.Validation(path_tr,path_label,path_converted_tr,path_converted_label,path_val,path_val_label)
+#path_tr = 'BrainTumour/imagesTr'
+#path_label = 'BrainTumour/labelsTr'
+#path_converted_tr = 'SlicedDataset/imagesTr'
+#path_converted_label = 'SlicedDataset/labelsTr'
+#path_val = 'SlicedDataset/imagesVal'
+#path_val_label = 'SlicedDataset/labelsVal'
+#Convert_Images.Validation(path_tr,path_label,path_converted_tr,path_converted_label,path_val,path_val_label)
