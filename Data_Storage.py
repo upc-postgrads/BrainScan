@@ -1,3 +1,15 @@
+#In this script, we takes the nifti images located on the specified path and axially slices each 3D image, saving each slice as a
+#grayscale image with uint8 values in the range [0,255] on path_converted_images. The images are saved in the specified format.
+#We first need to introduce a 'mode' argument so as to specify if we are dealing with 'training', 'testing', 'label' or 'validation'
+#images. The only difference between the modes is the way of naming the files: training and label images go from patient 1 to 
+#patient 484 whereas testing images go from 485 to 750. On the other hand, the 'validation' mode keeps a specified number of patients
+#for validation. 
+
+#Note: let us see the way of naming the slices by means of an example:
+            #-Training/Testing: P1C4_125 -> means Patient 1, Constrast 4, Slice 125.
+            #-Labels: P1_148 -> means Patient 1 and slice 148.
+
+
 import nibabel as nib
 from nibabel.testing import data_path
 import numpy as np
