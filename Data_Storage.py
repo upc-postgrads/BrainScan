@@ -20,6 +20,9 @@ import sys
 import random
 
 
+#############################################
+#Determine the parameters and the task
+
 contrast = 0
 contrasts = 4
 slice = 0
@@ -30,6 +33,10 @@ if mode == 'validation':
 if mode != 'train' and mode != 'test' and mode != 'labels' and mode != 'validation':
     sys.exit('The chosen option is not valid')
 format = input("Choose a format, for exemple: '.jpg' ")
+
+
+#############################################
+#Auxiliar functions
 
 def read_data(read_path,filename):
     nii_image = nib.load(read_path + str(filename))
@@ -58,6 +65,9 @@ def store_data(data_gray, slice_path):
     Image.fromarray(data_gray).save(slice_path)
 
 
+#############################################
+
+#Specify the paths
 #When chosing mode = 'validation':
 read_path_train = 'tr_nifti/' #path with the nifti images
 read_path_labels = 'labels_nifti/' #path with the nifti images
@@ -67,6 +77,8 @@ write_path_trLabels = 'trLabels_png/' #path to save the new images
 write_path_valLabels = 'valLabels_png/' #path to save the new images
 
 
+##############################################
+#Perform the specified task
 
 if mode == 'train' or mode == 'test':
     if mode == 'train':
