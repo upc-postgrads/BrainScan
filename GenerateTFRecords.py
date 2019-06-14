@@ -178,6 +178,7 @@ class GenerateTFRedord:
                     self.generate_tfrecord_from_patient(inputFileVolume,InputFileLabel,False)
 
 
+
     def generate_tfrecords_for_test(self):
         for i,j in enumerate(list(range(self.PATIENT_START_TEST, self.PATIENT_END_TEST))):
             if i<self.number_of_images_to_process:
@@ -194,12 +195,13 @@ class GenerateTFRedord:
         self.generate_tfrecords_for_test()
 
 
+
 if __name__ == '__main__':
 
-    imagePathTR = "Users/aitorjara/Desktop/Task01_BrainTumour/imagesTr"
-    labelPathTR = "Users/aitorjara/Desktop/Task01_BrainTumour/labelsTr"
-    imagePathTS = "Users/aitorjara/Desktop/Task01_BrainTumour/imagesTs"
-    outputDir = "Users/aitorjara/Desktop/CleanSlices/TFRecords"
+    imagePathTR = "/Users/aitorjara/Desktop/Task01_BrainTumour/imagesTr/"
+    labelPathTR = "/Users/aitorjara/Desktop/Task01_BrainTumour/labelsTr/"
+    imagePathTS = "/Users/aitorjara/Desktop/Task01_BrainTumour/imagesTs/"
+    outputDir = "/Users/aitorjara/Desktop/CleanSlices/TFRecords"
     number_of_images_to_process=10
     percent_for_validation=5
     generator = GenerateTFRedord(imagePathTR,labelPathTR,imagePathTS,outputDir,number_of_images_to_process,percent_for_validation)
