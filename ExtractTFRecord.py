@@ -190,7 +190,7 @@ class TFRecordExtractor:
 
 
 if __name__ == '__main__':
-    tfrecord_file='../BrainTumourImages/Generated/Validation/BRATS_001.tfrecords'
-    outputFolder='../BrainTumourImages/Generated/caca'
+    tfrecord_file='/Users/aitorjara/Desktop/CleanSlices/TFRecords/'
+    outputFolder='/Users/aitorjara/Desktop/CleanSlices/ExtractTFRecords/'
     t = TFRecordExtractor(tfrecord_file,outputFolder,True)
     t.extract_image()
