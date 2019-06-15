@@ -21,12 +21,15 @@ import argparse
 import UNet_Tensorflow
 #from tensorflow.keras.preprocessing import image
 import dataset
-from UNet_Tensorflow import batch_size
+
 
 
 NUM_EPOCHS = 10
 BATCH_SIZE= 10
 LEARNING_RATE= 1e-4
+
+#"zhixuhao"
+#"nuria"
 MODEL_TO_USE="zhixuhao"
 
 def get_file_lists(data_dir):
