@@ -12,13 +12,11 @@
 #watch -n0.1 nvidia-smi
 
 import tensorflow as tf
-import model as model
 import os
 import utils
 from tensorflow.keras import backend
 #from PIL import Image
 import argparse
-import UNet_Tensorflow
 #from tensorflow.keras.preprocessing import image
 import dataset
 
@@ -73,8 +71,10 @@ if __name__ == '__main__':
     
 
     if MODEL_TO_USE == "zhixuhao":
+        import model as model
         y_ = model.unet(x,True)
     elif MODEL_TO_USE == "nuria":
+        import UNet_Tensorflow         
         y_ = UNet_Tensorflow.unet_model(x, UNet_Tensorflow.weights, UNet_Tensorflow.biases, training=True)        
 
 
