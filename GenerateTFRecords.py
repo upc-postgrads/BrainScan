@@ -110,7 +110,7 @@ class GenerateTFRedord:
         frame3=dataVol[:,:,:,3]
         
         valid_images = []
-        for i in range(self.SLICE_START, self.SLICE_END):
+        for i in range(self.SLICE_START, self.SLICE_END+1):
             
             frame_0_gray_scale= self.get_gray_scale(frame0[:, :, i])
             frame_1_gray_scale= self.get_gray_scale(frame1[:, :, i])
@@ -170,7 +170,7 @@ class GenerateTFRedord:
         return
         
     def generate_tfrecords_for_training(self):
-        for i,j in enumerate(list(range(self.PATIENT_START_TRAINING, self.PATIENT_END_TRAINING))):
+        for i,j in enumerate(list(range(self.PATIENT_START_TRAINING, self.PATIENT_END_TRAINING+1))):
             if i<self.number_of_images_to_process:
                 inputFileVolume=os.path.join(self.imagePathTR,"BRATS_%03d.nii.gz" % (j))
                 InputFileLabel=os.path.join(self.labelPathTR,"BRATS_%03d.nii.gz" % (j))
@@ -179,7 +179,7 @@ class GenerateTFRedord:
                 
                 
     def generate_tfrecords_for_test(self):
-        for i,j in enumerate(list(range(self.PATIENT_START_TEST, self.PATIENT_END_TEST))):
+        for i,j in enumerate(list(range(self.PATIENT_START_TEST, self.PATIENT_END_TEST+1))):
             if i<self.number_of_images_to_process:
                 inputFileVolume=os.path.join(self.imagePathTS,"BRATS_%03d.nii.gz" % (j))
                 if os.path.isfile(inputFileVolume):
