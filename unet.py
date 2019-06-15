@@ -61,7 +61,10 @@ def unet_model(data, training=False, norm_option=False, drop_val=0.5):
     if norm_option == True:
         conv_bottle_2 = tf.layers.batch_normalization(conv_bottle_2)
     conv_bottle_2 = tf.nn.relu(conv_bottle_2)
-    drop = tf.layers.dropout(conv_bottle_2, rate=drop_val)
+    if Training == True:
+        drop = tf.layers.dropout(conv_bottle_2, rate=drop_val)
+    if Training == False:
+        drop = conv_bottle_2
 
     #Upsampling path (Deconvolutional layers)
     deconv1 = tf.layers.conv2d_transpose(drop, 1024, [2,2], strides=[2,2], padding='SAME', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*1024))))
