@@ -28,7 +28,7 @@ LEARNING_RATE= 1e-4
 
 #"zhixuhao"
 #"nuria"
-MODEL_TO_USE="zhixuhao"
+MODEL_TO_USE="nuria"
 
 def get_file_lists(data_dir):
     import glob
@@ -74,8 +74,8 @@ if __name__ == '__main__':
         import model as model
         y_ = model.unet(x,True)
     elif MODEL_TO_USE == "nuria":
-        import UNet_Tensorflow         
-        y_ = UNet_Tensorflow.unet_model(x, UNet_Tensorflow.weights, UNet_Tensorflow.biases, training=True)        
+        import unet         
+        y_ = unet.unet_model(x, training=True)        
 
 
     loss = tf.reduce_mean(loss(y, y_))
