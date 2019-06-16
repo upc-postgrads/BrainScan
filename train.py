@@ -49,7 +49,7 @@ def validation_input_fn(file_path,num_epochs, batch_size):
 def loss(labels, logits):
     labels = backend.print_tensor(labels, message='labels = ')
     logits = backend.print_tensor(logits, message='logits = ')    
-    return tf.keras.losses.sparse_categorical_crossentropy(labels, logits, from_logits=True)
+    return tf.losses.sparse_softmax_cross_entropy(labels, logits)
     #return tf.nn.softmax_cross_entropy_with_logits_v2(logits=logits, labels=labels)
 
 
@@ -66,8 +66,8 @@ if __name__ == '__main__':
     next_batch = train_input_fn(train_list,args.num_epochs, args.batch_size)
     
     # tf Graph Input
-    x = tf.placeholder('float', shape=[None, 192, 192, 4], name='x')
-    y = tf.placeholder('float', shape=[None, 192, 192, 1], name='y')
+    x = tf.placeholder(tf.float32, shape=[None, 192, 192, 4], name='x')
+    y = tf.placeholder(tf.int32, shape=[None, 192, 192, 1], name='y')
     
 
     if MODEL_TO_USE == "zhixuhao":
@@ -78,10 +78,13 @@ if __name__ == '__main__':
         y_ = UNet_Tensorflow.unet_model(x, UNet_Tensorflow.weights, UNet_Tensorflow.biases, training=True)        
 
 
-    loss = tf.reduce_mean(loss(labels=y,logits=y_))    
+    loss = tf.reduce_mean(loss(y, y_))
+    #loss = tf.losses.get_total_loss()
+    #loss = tf.reduce_mean(loss(labels=y,logits=y_))    
     
     optimizer = tf.train.AdamOptimizer(learning_rate=LEARNING_RATE)
     #optimizer = tf.train.AdadeltaOptimizer(learning_rate=LEARNING_RATE)
+    #optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.05)
     
     train_op = optimizer.minimize(loss)
     
