@@ -12,22 +12,23 @@
 #watch -n0.1 nvidia-smi
 
 import tensorflow as tf
-import model as model
 import os
 import utils
 from tensorflow.keras import backend
 #from PIL import Image
 import argparse
-import UNet_Tensorflow
 #from tensorflow.keras.preprocessing import image
 import dataset
-from UNet_Tensorflow import batch_size
+
 
 
 NUM_EPOCHS = 10
 BATCH_SIZE= 10
 LEARNING_RATE= 1e-4
-MODEL_TO_USE="zhixuhao"
+
+#"zhixuhao"
+#"nuria"
+MODEL_TO_USE="nuria"
 
 def get_file_lists(data_dir):
     import glob
@@ -47,65 +48,70 @@ def validation_input_fn(file_path,num_epochs, batch_size):
 #logits: predicció
 def loss(labels, logits):
     labels = backend.print_tensor(labels, message='labels = ')
-    logits = backend.print_tensor(logits, message='logits = ')    
-    return tf.keras.losses.sparse_categorical_crossentropy(labels, logits, from_logits=True)
+    logits = backend.print_tensor(logits, message='logits = ')
+    return tf.losses.sparse_softmax_cross_entropy(labels, logits)
     #return tf.nn.softmax_cross_entropy_with_logits_v2(logits=logits, labels=labels)
 
 
 if __name__ == '__main__':
-    
-    parser = argparse.ArgumentParser(description='Pipeline execution')   
-    parser.add_argument('-t', '--trainingdir', default='../BrainTumourImages/Generated/', help='Location of the TFRecors for training')     
+
+    parser = argparse.ArgumentParser(description='Pipeline execution')
+    parser.add_argument('-t', '--trainingdir', default='../BrainTumourImages/Generated/', help='Location of the TFRecors for training')
     parser.add_argument('-l', '--logdir', default='/tmp/aidl', help='Log dir for tfevents')
     parser.add_argument('-e', '--num_epochs', type=int, default=NUM_EPOCHS, help='Number of epochs')
     parser.add_argument('-b', '--batch_size', type=int, default=BATCH_SIZE, help='Batch size')
 
-    args = parser.parse_args()    
+    args = parser.parse_args()
     train_list,valid_list = get_file_lists(args.trainingdir)
     next_batch = train_input_fn(train_list,args.num_epochs, args.batch_size)
-    
+
     # tf Graph Input
-    x = tf.placeholder('float', shape=[None, 192, 192, 4], name='x')
-    y = tf.placeholder('float', shape=[None, 192, 192, 1], name='y')
-    
+    x = tf.placeholder(tf.float32, shape=[None, 192, 192, 4], name='x')
+    y = tf.placeholder(tf.int32, shape=[None, 192, 192, 1], name='y')
+
 
     if MODEL_TO_USE == "zhixuhao":
+        import model as model
         y_ = model.unet(x,True)
     elif MODEL_TO_USE == "nuria":
-        y_ = UNet_Tensorflow.unet_model(x, UNet_Tensorflow.weights, UNet_Tensorflow.biases, training=True)        
+        import unet
+        y_ = unet.unet_model(x, training=True)
 
 
-    loss = tf.reduce_mean(loss(labels=y,logits=y_))    
-    
+    loss = tf.reduce_mean(loss(y, y_))
+    #loss = tf.losses.get_total_loss()
+    #loss = tf.reduce_mean(loss(labels=y,logits=y_))
+
     optimizer = tf.train.AdamOptimizer(learning_rate=LEARNING_RATE)
     #optimizer = tf.train.AdadeltaOptimizer(learning_rate=LEARNING_RATE)
-    
+    #optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.05)
+
     train_op = optimizer.minimize(loss)
-    
-    #prediction = tf.argmax(y_, 1)    
+
+    #prediction = tf.argmax(y_, 1)
     with tf.Session() as sess:
-        
+
         # train
         sess.run(tf.global_variables_initializer())
-        
+
         # op to write logs to Tensorboard
         logdir = os.path.expanduser(args.logdir)
         utils.ensure_dir(logdir)
-        writer = tf.summary.FileWriter(logdir, graph=tf.get_default_graph())        
-        
-        
+        writer = tf.summary.FileWriter(logdir, graph=tf.get_default_graph())
+
+
         for epoch in range(args.num_epochs):
             x_train_batch, y_train_batch = sess.run(next_batch)
             current_loss, _ = sess.run([loss, train_op], feed_dict={x:x_train_batch,
                                                                      y:y_train_batch})
             print(current_loss)
-            
+
             """
             #Les dades son les correctes:
             for j in range(x_train_batch.shape[0]):
                 outputFile=os.path.join("/home/deivit/Desktop/dades/Documents/david/upc/AIDL/projecte/unet/BrainTumourImages/caca",str(epoch) + str(j)  +  ".jpg" )
                 data=x_train_batch[j,:,:,0]
-                #data = data.reshape(192, 192, 4)            
+                #data = data.reshape(192, 192, 4)
                 im=Image.fromarray(data)
-                im.save(outputFile)   
-            """  
+                im.save(outputFile)
+            """

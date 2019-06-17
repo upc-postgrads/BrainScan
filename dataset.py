@@ -20,7 +20,7 @@ def input_fn(filenames, perform_shuffle=False, num_epochs=1, batch_size=1):
         sample = tf.parse_single_example(serialized=serialized,
                                                  features=features)
         frames = tf.decode_raw(sample['image'], tf.uint8)
-        label = tf.decode_raw(sample['label'], tf.uint8) 
+        label = tf.decode_raw(sample['label'], tf.uint8)
         PatientID = tf.cast(sample['PatientID'], tf.int32)
         Slide = tf.cast(sample['Slide'], tf.int32)
         height= tf.cast(sample['height'], tf.int32)
@@ -28,8 +28,8 @@ def input_fn(filenames, perform_shuffle=False, num_epochs=1, batch_size=1):
         depth= tf.cast(sample['depth'], tf.int32)
 
         frames = tf.reshape(frames,(height, width, depth))
-        label = tf.reshape(label,(height, width, -1))
-        tf.expand_dims(label, 1).shape '''porque le añade una dimension donde irian las columnas?'''
+        label = tf.reshape(label,(height, width,-1))
+        tf.expand_dims(label, 1).shape
 
         #Add data augmentation here
         frames=tf.image.central_crop(frames,0.8)
@@ -53,7 +53,6 @@ def input_fn(filenames, perform_shuffle=False, num_epochs=1, batch_size=1):
 
     # Batch size to use
     dataset = dataset.batch(batch_size)
-#    dataset = dataset.prefetch(batch_size)
 
     iterator = dataset.make_one_shot_iterator()
     batch_features, batch_labels = iterator.get_next()

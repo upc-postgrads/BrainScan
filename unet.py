@@ -2,6 +2,7 @@ import tensorflow as tf
 from math import sqrt
 import sys
 
+
 # U-NET MODEL
 
 def unet_model(data, training=False, norm_option=False, drop_val=0.5):
@@ -61,7 +62,10 @@ def unet_model(data, training=False, norm_option=False, drop_val=0.5):
     if norm_option == True:
         conv_bottle_2 = tf.layers.batch_normalization(conv_bottle_2)
     conv_bottle_2 = tf.nn.relu(conv_bottle_2)
-    drop = tf.layers.dropout(conv_bottle_2, rate=drop_val)
+    if training == True:
+        drop = tf.layers.dropout(conv_bottle_2, rate=drop_val)
+    if training == False:
+        drop = conv_bottle_2
 
     #Upsampling path (Deconvolutional layers)
     deconv1 = tf.layers.conv2d_transpose(drop, 1024, [2,2], strides=[2,2], padding='SAME', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*1024))))
@@ -78,7 +82,7 @@ def unet_model(data, training=False, norm_option=False, drop_val=0.5):
     UpPath_conv3 = tf.layers.conv2d(deconv2, 256, [3,3], strides=[1,1], padding='SAME', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*512))))
     UpPath_conv4 = tf.layers.conv2d(UpPath_conv3, 256, [3,3], strides=[1,1], padding='SAME', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*256))))
 
-    deconv3 = tf.layers.conv2d_transpose(UpPath_conv, 256, [2,2], strides=[2,2], padding='SAME', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*256))))
+    deconv3 = tf.layers.conv2d_transpose(UpPath_conv4, 256, [2,2], strides=[2,2], padding='SAME', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*256))))
     if norm_option == True:
         deconv3 = tf.layers.batch_normalization(deconv3)
     deconv3 = tf.nn.relu(deconv3)
