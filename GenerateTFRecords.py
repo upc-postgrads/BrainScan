@@ -178,7 +178,6 @@ class GenerateTFRedord:
                     self.generate_tfrecord_from_patient(inputFileVolume,InputFileLabel,False)
 
 
-
     def generate_tfrecords_for_test(self):
         for i,j in enumerate(list(range(self.PATIENT_START_TEST, self.PATIENT_END_TEST))):
             if i<self.number_of_images_to_process:
@@ -193,7 +192,6 @@ class GenerateTFRedord:
         utils.ensure_dir(self.outputimagePathTS)
         self.generate_tfrecords_for_training()
         self.generate_tfrecords_for_test()
-
 
 
 if __name__ == '__main__':

@@ -3,7 +3,6 @@ import os
 import shutil
 from PIL import Image
 import numpy as np
-from GenerarImatges import outputDir
 
 class TFRecordExtractor:
 
@@ -190,7 +189,7 @@ class TFRecordExtractor:
 
 
 if __name__ == '__main__':
-    tfrecord_file='/Users/aitorjara/Desktop/CleanSlices/TFRecords/'
-    outputFolder='/Users/aitorjara/Desktop/CleanSlices/ExtractTFRecords/'
+    tfrecord_file='/Users/aitorjara/Desktop/CleanSlices/TFRecords/Validation/BRATS_001.tfrecords'
+    outputFolder='/Users/aitorjara/Desktop/CleanSlices/ExtractTFRecords'
     t = TFRecordExtractor(tfrecord_file,outputFolder,True)
     t.extract_image()

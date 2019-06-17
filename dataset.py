@@ -8,8 +8,8 @@ def input_fn(filenames, perform_shuffle=False, num_epochs=1, batch_size=1):
     def _parse_function(serialized):
         features = \
         {
-            'image': tf.FixedLenFeature([], tf.string), '''Por qué string si tiene shape scalar (un numero)??'''
-            'label': tf.FixedLenFeature([], tf.string), '''Por qué string si tiene shape scalar (un numero)??'''
+            'image': tf.FixedLenFeature([], tf.string),
+            'label': tf.FixedLenFeature([], tf.string),
             'PatientID': tf.FixedLenFeature([], tf.int64),
             'Slide': tf.FixedLenFeature([], tf.int64),
             'height': tf.FixedLenFeature([], tf.int64),
@@ -19,8 +19,8 @@ def input_fn(filenames, perform_shuffle=False, num_epochs=1, batch_size=1):
 
         sample = tf.parse_single_example(serialized=serialized,
                                                  features=features)
-        frames = tf.decode_raw(sample['image'], tf.uint8) '''Porque uint8 y no integer?'''
-        label = tf.decode_raw(sample['label'], tf.uint8) '''Porque uint8 y no integer?'''
+        frames = tf.decode_raw(sample['image'], tf.uint8)
+        label = tf.decode_raw(sample['label'], tf.uint8) 
         PatientID = tf.cast(sample['PatientID'], tf.int32)
         Slide = tf.cast(sample['Slide'], tf.int32)
         height= tf.cast(sample['height'], tf.int32)
