@@ -45,5 +45,14 @@ def unet(inputs, training=False):
     conv9 = tf.keras.layers.Conv2D(64, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(merge9)
     conv9 = tf.keras.layers.Conv2D(64, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(conv9)
     conv9 = tf.keras.layers.Conv2D(2, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(conv9)
-    conv10 = tf.keras.layers.Conv2D(1, 1, activation = 'sigmoid')(conv9)
+    
+    conv10 = tf.keras.layers.Conv2D(4, 1)(conv9)
+    #conv10 = tf.keras.layers.Conv2D(filters=4, kernel_size=(1, 1))(conv9)
+    #conv10 = tf.keras.layers.BatchNormalization()(conv10)
+    #conv10 = tf.keras.layers.Reshape((192*192, 4), input_shape=(192, 192, 4))(conv10)
+    #conv10 = tf.keras.layers.Activation('softmax')(conv10)    
+    
+    #conv10 = tf.keras.layers.Conv2D(4, 1, activation = 'softmax')(conv9)
+    
+    print(" * Output: %s" % conv10)
     return conv10
