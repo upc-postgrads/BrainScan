@@ -118,7 +118,7 @@ def main(trainingdir, model, num_epochs, batch_size, learning_rate, logdir, rest
             print(current_loss)
             
             if epoch % STEPS_SAVER == 0:
-                print('Step {}\tSaving weights to {}'.format(step, model_checkpoint_path))
+                print('Step {}\tSaving weights to {}'.format(model_checkpoint_path))
                 saver.save(sess, save_path=model_checkpoint_path)
             
             
