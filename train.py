@@ -146,7 +146,7 @@ def main(trainingdir, model, num_epochs, batch_size, learning_rate, logdir, rest
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Pipeline execution')
-    parser.add_argument('-t', '--trainingdir', default='../BrainTumourImages/Generated/', help='Location of the TFRecors for training')
+    parser.add_argument('-t', '--trainingdir', default='/Users/aitorjara/Desktop/CleanSlices/TFRecords', help='Location of the TFRecors for training')
     parser.add_argument('-l', '--logdir', default='/tmp/aidl', help='Log dir for tfevents')
     parser.add_argument('-e', '--num_epochs', type=int, default=NUM_EPOCHS, help='Number of epochs')
     parser.add_argument('-b', '--batch_size', type=int, default=BATCH_SIZE, help='Batch size')

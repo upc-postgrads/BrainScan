@@ -11,19 +11,18 @@ import imageio
 def input_fn(filenames, perform_shuffle=False, num_epochs=1, batch_size=1):
 
     def _parse_function(serialized):
-        features = \
-        {
-            'image': tf.FixedLenFeature([], tf.string),
-            'label': tf.FixedLenFeature([], tf.string),
-            'PatientID': tf.FixedLenFeature([], tf.int64),
-            'Slide': tf.FixedLenFeature([], tf.int64),
-            'height': tf.FixedLenFeature([], tf.int64),
-            'width': tf.FixedLenFeature([], tf.int64),
-            'depth': tf.FixedLenFeature([], tf.int64)
-        }
-        with tf.name_scope('get_slices_from_volume'):
-            sample = tf.parse_single_example(serialized=serialized,
-                                                 features=features)
+        with tf.name_scope('create_samples'):
+            features = \
+            {
+                'image': tf.FixedLenFeature([], tf.string),
+                'label': tf.FixedLenFeature([], tf.string),
+                'PatientID': tf.FixedLenFeature([], tf.int64),
+                'Slide': tf.FixedLenFeature([], tf.int64),
+                'height': tf.FixedLenFeature([], tf.int64),
+                'width': tf.FixedLenFeature([], tf.int64),
+                'depth': tf.FixedLenFeature([], tf.int64)
+            }
+            sample = tf.parse_single_example(serialized=serialized,features=features)
             frames = tf.decode_raw(sample['image'], tf.uint8)
             label = tf.decode_raw(sample['label'], tf.uint8)
             PatientID = tf.cast(sample['PatientID'], tf.int32)
@@ -39,41 +38,39 @@ def input_fn(filenames, perform_shuffle=False, num_epochs=1, batch_size=1):
 
         #Add data augmentation here
         with tf.name_scope('data_augmentation'):
-            #@tf.function()
-            #def customized_cropp():
-                #if mode = 'train':
-                    #r_path = r_path_train
-                #elif mode = 'test':
-                    #r_path = r_path_test
-                #elif mode = 'label':
-                    #r_path = r_path_label
-                #
-                #max_hei = 0
-                #max_wid = 0
-                #cropped_images = []
-                #for filename in os.listdir(r_path):
-                    #data = img.imread(r_path + filename)
-                    #mask = data > 0             # Mask of non-black pixels (assuming image has a single channel).
-                    #coords = np.argwhere(mask)  # Coordinates of non-black pixels.
-                    #try:                        # Bounding box of non-black pixels.
-                        #x0, y0 = coords.min(axis=0)
-                        #x1, y1 = coords.max(axis=0) + 1   # slices are exclusive at the top
-                    #except:
-                        #pass
-                #
-                    #cropped = data[x0:x1, y0:y1]          # Get the contents of the bounding box.
-                    #cropped_images.append(cropped)        # Save the cropped images in a list as data
-                    #if cropped.shape[0] > max_hei:
-                        #max_hei = cropped.shape[0]
-                    #if cropped.shape[1] > max_hei:
-                        #max_wid = cropped.shape[1]
-                #    black = [0,0,0]
-                    #for image in cropped_images:
-                    #constant=cv2.copyMakeBorder(image, (max_hei - image.shape[0])/2, (max_wid - image.shape[0])/2, (max_wid -     image.shape[0])/2, (max_wid - #image.shape[0])/2, cv2.BORDER_CONSTANT,value=black)
-
+        #@tf.function()
+        #def customized_cropp():
+            #if mode = 'train':
+                #r_path = r_path_train
+            #elif mode = 'test':
+                #r_path = r_path_test
+            #elif mode = 'label':
+                #r_path = r_path_label
+            #
+            #max_hei = 0
+            #max_wid = 0
+            #cropped_images = []
+            #for filename in os.listdir(r_path):
+                #data = img.imread(r_path + filename)
+                #mask = data > 0             # Mask of non-black pixels (assuming image has a single channel).
+                #coords = np.argwhere(mask)  # Coordinates of non-black pixels.
+                #try:                        # Bounding box of non-black pixels.
+                    #x0, y0 = coords.min(axis=0)
+                    #x1, y1 = coords.max(axis=0) + 1   # slices are exclusive at the top
+                #except:
+                    #pass
+            #
+                #cropped = data[x0:x1, y0:y1]          # Get the contents of the bounding box.
+                #cropped_images.append(cropped)        # Save the cropped images in a list as data
+                #if cropped.shape[0] > max_hei:
+                    #max_hei = cropped.shape[0]
+                #if cropped.shape[1] > max_hei:
+                    #max_wid = cropped.shape[1]
+            #    black = [0,0,0]
+                #for image in cropped_images:
+                    #constant=cv2.copyMakeBorder(image, (max_hei - image.shape[0])/2, (max_wid - image.shape[0])/2, (max_wid -    image.shape[0])/2, (max_wid - #image.shape[0])/2, cv2.BORDER_CONSTANT,value=black)
             frames=tf.image.central_crop(frames,0.8)
             label=tf.image.central_crop(label,0.8)
-
         return frames, label
 
 
