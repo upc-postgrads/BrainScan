@@ -5,7 +5,7 @@ import sys
 
 # U-NET MODEL
 
-def unet_model(data, training=False, norm_option=False, drop_val=0.5):
+def unet_model(data, training=False, norm_option=False, drop_val= False):
 
     if norm_option != True and norm_option != False:
         sys.exit('Not a valid norm_option')

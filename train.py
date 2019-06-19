@@ -22,7 +22,7 @@ import dataset
 
 
 
-NUM_EPOCHS = 10
+NUM_EPOCHS = 1000
 BATCH_SIZE= 10
 LEARNING_RATE= 1e-4
 
@@ -49,14 +49,14 @@ def validation_input_fn(file_path,num_epochs, batch_size):
 def loss(labels, logits):
     labels = backend.print_tensor(labels, message='labels = ')
     logits = backend.print_tensor(logits, message='logits = ')
-    return tf.losses.sparse_softmax_cross_entropy(labels, logits)
+    return tf.losses.sparse_softmax_cross_entropy(labels, logits) #mirar sparse vs regular softmax
     #return tf.nn.softmax_cross_entropy_with_logits_v2(logits=logits, labels=labels)
 
 
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Pipeline execution')
-    parser.add_argument('-t', '--trainingdir', default='../BrainTumourImages/Generated/', help='Location of the TFRecors for training')
+    parser.add_argument('-t', '--trainingdir', default='/Users/aitorjara/Desktop/CleanSlices/TFRecords', help='Location of the TFRecors for training')
     parser.add_argument('-l', '--logdir', default='/tmp/aidl', help='Log dir for tfevents')
     parser.add_argument('-e', '--num_epochs', type=int, default=NUM_EPOCHS, help='Number of epochs')
     parser.add_argument('-b', '--batch_size', type=int, default=BATCH_SIZE, help='Batch size')
@@ -104,7 +104,7 @@ if __name__ == '__main__':
             x_train_batch, y_train_batch = sess.run(next_batch)
             current_loss, _ = sess.run([loss, train_op], feed_dict={x:x_train_batch,
                                                                      y:y_train_batch})
-            print(current_loss)
+            print("Loss: %02d" % (current_loss))
 
             """
             #Les dades son les correctes:
