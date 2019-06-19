@@ -196,11 +196,11 @@ class GenerateTFRedord:
 
 if __name__ == '__main__':
 
-    imagePathTR = "%HOMEPATH%/BrainTumourImages/Original/imagesTr"
-    labelPathTR = "%HOMEPATH%//BrainTumourImages/Original/labelsTr"
-    imagePathTS = "%HOMEPATH%//BrainTumourImages/Original/imagesTs"
-    outputDir = "%HOMEPATH%//BrainTumourImages/Generated"
-    number_of_images_to_process=10
+    imagePathTR = "Macintosh_SSD_Samsung_EVO_256_GB/BrainTumourImages/Original/imagesTr"
+    labelPathTR = "Macintosh_SSD_Samsung_EVO_256_GB/BrainTumourImages/Original/labelsTr"
+    imagePathTS = "Macintosh_SSD_Samsung_EVO_256_GB/BrainTumourImages/Original/imagesTs"
+    outputDir = "Macintosh_SSD_Samsung_EVO_256_GB/BrainTumourImages/Generated"
+    number_of_images_to_process=485
     percent_for_validation=5
     generator = GenerateTFRedord(imagePathTR,labelPathTR,imagePathTS,outputDir,number_of_images_to_process,percent_for_validation)
     generator.generate_tfrecords()
