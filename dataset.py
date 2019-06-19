@@ -23,6 +23,7 @@ def input_fn(filenames, perform_shuffle=False, num_epochs=1, batch_size=1):
                 'depth': tf.FixedLenFeature([], tf.int64)
             }
             sample = tf.parse_single_example(serialized=serialized,features=features)
+
             frames = tf.decode_raw(sample['image'], tf.uint8)
             label = tf.decode_raw(sample['label'], tf.uint8)
             PatientID = tf.cast(sample['PatientID'], tf.int32)
