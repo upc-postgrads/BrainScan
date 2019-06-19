@@ -196,10 +196,10 @@ class GenerateTFRedord:
 
 if __name__ == '__main__':
 
-    imagePathTR = "../BrainTumourImages/Original/imagesTr"
-    labelPathTR = "../BrainTumourImages/Original/labelsTr"
-    imagePathTS = "../BrainTumourImages/Original/imagesTs"
-    outputDir = "../BrainTumourImages/Generated"
+    imagePathTR = "%HOMEPATH%/BrainTumourImages/Original/imagesTr"
+    labelPathTR = "%HOMEPATH%//BrainTumourImages/Original/labelsTr"
+    imagePathTS = "%HOMEPATH%//BrainTumourImages/Original/imagesTs"
+    outputDir = "%HOMEPATH%//BrainTumourImages/Generated"
     number_of_images_to_process=10
     percent_for_validation=5
     generator = GenerateTFRedord(imagePathTR,labelPathTR,imagePathTS,outputDir,number_of_images_to_process,percent_for_validation)
