@@ -17,9 +17,9 @@ def count_records(path):
     return num
 
 #training
-train_images = count_records('C:/Users/nuria/Desktop/FinalProject/BrainTumour/Generated_TFRecords/Training')
+train_images = count_records('/Users/aitorjara/Desktop/BrainTumourImages/Generated/Training')
 #validation
-valid_images = count_records('C:/Users/nuria/Desktop/FinalProject/BrainTumour/Generated_TFRecords/Validation')
+valid_images = count_records('/Users/aitorjara/Desktop/BrainTumourImages/Generated/Validation')
 
 #########################################################
 
@@ -32,7 +32,7 @@ learning_rate = 1e-6
 
 ######################################## DATAFLOW GRAPH #########################################################
 
-train_list, valid_list = get_file_lists("C:/Users/nuria/Desktop/FinalProject/BrainTumour/Generated_TFRecords")
+train_list, valid_list = get_file_lists("/Users/aitorjara/Desktop/BrainTumourImages/Generated")
 batch_train = input_fn(filenames=train_list, mode='training', num_epochs=n_epochs, batch_size=size_batch_train)
 batch_valid = input_fn(filenames=valid_list, mode='validation', num_epochs=n_epochs, batch_size=size_batch_valid)
 
