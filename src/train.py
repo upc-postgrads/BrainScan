@@ -14,11 +14,13 @@ NUM_EPOCHS = 1
 BATCH_SIZE_TRAIN = 25
 BATCH_SIZE_TEST = 20
 STEP_VALID = 50
+STEP_METRICS = 50
 LEARNING_RATE = 1e-4
 STEPS_SAVER = 100
 MODEL_TO_USE = "unet_keras"
 TRAININGDIR = "../BrainTumourImages/Generated/"
 LOGDIR = '/tmp/aidl'
+ 
 
 #########################################################
 
@@ -161,9 +163,13 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, step
 
                 #training
                 batch_images, batch_labels = sess.run(batch_train)
-                _,cost,summary_val,step,logits_val = sess.run([train_op,loss,summary_op,global_step,logits], feed_dict={x:batch_images, y:batch_labels})
-                print('\nEpoch {}, batch {} -- Loss: {:.3f}'.format(epoch+1, step+1, cost))
-                writer.add_summary(summary_val,step)
+                _,cost = sess.run([train_op,loss], feed_dict={x:batch_images, y:batch_labels})
+                print('\nEpoch {}, batch {} -- Loss: {:.3f}'.format(epoch+1, step+1, cost))                
+                
+                if step % STEP_METRICS == 0:
+                    summary_val,step,logits_val = sess.run([summary_op,global_step,logits], feed_dict={x:batch_images, y:batch_labels})
+                    writer.add_summary(summary_val,step)
+                    
 
                 #validation
                 if step % step_valid == 0:
