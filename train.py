@@ -6,9 +6,6 @@ import utils
 from tensorflow.python.keras import backend as K
 
 
-    
-#########################################################
-    
 # Training parameters
 NUM_EPOCHS = 1
 BATCH_SIZE= 25
@@ -84,6 +81,10 @@ def loss_sparse(labels, logits):
     return tf.losses.sparse_softmax_cross_entropy(labels=labels, logits=logits)
     #return tf.nn.sparse_softmax_cross_entropy_with_logits(labels=labels, logits=logits)
     #return tf.nn.softmax_cross_entropy_with_logits_v2(logits=logits, labels=labels)
+
+# optimizer
+
+
     
  
 
