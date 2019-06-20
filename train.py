@@ -161,14 +161,14 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, step
                 #training
                 batch_images, batch_labels = sess.run(batch_train)
                 _,cost,summary_val,step,logits_val = sess.run([train_op,loss,summary_op,global_step,logits], feed_dict={x:batch_images, y:batch_labels})
+                print('\nEpoch {}, batch {} -- Loss: {:.3f}'.format(epoch+1, step+1, cost))
                 writer.add_summary(summary_val,step)
                 
                 #validation
                 if step % step_valid == 0:
                     batch_images_valid, batch_labels_valid = sess.run(batch_valid)
                     cost_valid = sess.run(loss, feed_dict={x:batch_images_valid, y:batch_labels_valid})
-    
-                print('\nEpoch {}, batch {} -- Loss: {:.3f}, Validation Loss: {:.3f}'.format(epoch+1, step+1, cost, cost_valid))
+                    print('\nEpoch {} -- Validation Loss: {:.3f}'.format(epoch+1, cost_valid))
                 
                 if step % STEPS_SAVER == 0:
                     print('Step {}\tSaving weights to {}'.format(step+1, model_checkpoint_path))
