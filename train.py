@@ -116,11 +116,11 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, step
 
 
     if model == "unet_keras":
-        import model as model
+        from src.models import unet_keras as model
         logits = model.unet(x,True)
     elif model == "unet_tensorflow":
-        import unet
-        logits = unet.unet_model(x, training=True, norm_option=True)
+        from src.models import unet_tensorflow as model
+        logits = model.unet(x, training=True, norm_option=True)
 
     tf.summary.image("prediction", logits[:,:,:,1:])
     tf.summary.histogram("logits",logits)
