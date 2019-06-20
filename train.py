@@ -16,7 +16,7 @@ BATCH_SIZE_TEST = 20
 STEP_VALID = 50
 LEARNING_RATE = 1e-4
 STEPS_SAVER = 100
-MODEL_TO_USE = "zhixuhao"
+MODEL_TO_USE = "unet_keras"
 TRAININGDIR = "../BrainTumourImages/Generated/"
 LOGDIR = '/tmp/aidl'
 
@@ -115,10 +115,10 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, step
     #y=tf.squeeze(y)
 
 
-    if model == "zhixuhao":
+    if model == "unet_keras":
         import model as model
         logits = model.unet(x,True)
-    elif model == "nuria":
+    elif model == "unet_tensorflow":
         import unet
         logits = unet.unet_model(x, training=True, norm_option=True)
 
@@ -198,7 +198,7 @@ if __name__ == '__main__':
     parser.add_argument('-sv', '--step_valid', type=int, default=STEP_VALID, help='frequency of validation batches')
     parser.add_argument('-lr', '--learning_rate', type=float, default=LEARNING_RATE, help='Learning rate')
     parser.add_argument('-r', '--restore', help='Path to model checkpoint to restore weights from.')
-    parser.add_argument('-m', '--model', default=MODEL_TO_USE,help='Model to use, either zhixuhao or nuria.')
+    parser.add_argument('-m', '--model', default=MODEL_TO_USE,help='Model to use, either unet_keras or unet_tensorflow.')
 
     args = parser.parse_args()
 
