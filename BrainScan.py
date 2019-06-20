@@ -1,13 +1,18 @@
-#https://medium.com/ymedialabs-innovation/how-to-use-dataset-and-iterators-in-tensorflow-with-code-samples-3bb98b6b74ab
-import tensorflow as tf
+import argparse
+import os
 import numpy as np
-import matplotlib.image as img
-import matplotlib.pyplot as plt
-import cv2
-import imageio
+import tensorflow as tf
+import input_pipeline
+import utils
 
-#Data pipelin using TFRecords
+# ----------------- TRAINING LOOP SETUP ---------------- #
+    logdir = os.path.expanduser(logdir)
+    utils.ensure_dir(logdir)
 
+ # ----------------- DEFINITION PHASE ------------------- #
+    global_step = tf.get_variable('global_step', dtype=tf.int32, initializer=0, trainable=False)
+
+# Input pipeline
 def input_fn(filenames, perform_shuffle=False, num_epochs=1, batch_size=1):
 
     def _parse_function(serialized):
@@ -96,13 +101,4 @@ def input_fn(filenames, perform_shuffle=False, num_epochs=1, batch_size=1):
     batch_features, batch_labels = iterator.get_next()
     return batch_features, batch_labels
 
-
-#entrada labels 4 canales, 
-#softmax_cross_entropy, 
-#50% imagenes tumor/no_tumor,
-#1epoch de training y 1epoch de validation
-#moure summary op.global_step, logits a cada 50
-#metrica IoU
-#hacer crops de las zonas de tumor
-#Imatges validacio han de ser per pacient
-#Revisar Unet
+# Model
