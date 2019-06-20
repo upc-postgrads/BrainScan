@@ -9,7 +9,7 @@ from tensorflow.python.keras import backend as K
     
 #########################################################
     
-    #Training parameters
+#Training parameters
 NUM_EPOCHS = 1
 BATCH_SIZE= 25
 LEARNING_RATE= 1e-4
@@ -86,21 +86,23 @@ def loss_sparse(labels, logits):
  
 
 
-def main(trainingdir, model, num_epochs, batch_size, learning_rate, logdir, restore_weights): 
+def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, step_valid, learning_rate, logdir, restore_weights): 
+    
+    #param step_valid means that every step_valid batches of training images, a batch of image validation is going to be perfomed
     
     global_step=tf.get_variable('global_step',dtype=tf.int32,initializer=0,trainable=False)    
     
     train_images = count_records(os.path.join(trainingdir, 'Training')) #number of training images  
     valid_images = count_records(os.path.join(trainingdir, 'Validation')) #number of validation images
 
-    size_batch_valid = int(valid_images/int(train_images/batch_size))
+    size_batch_valid = int(valid_images/(int(train_images/size_batch_train)/step_valid))
     
     ######################################## DATAFLOW GRAPH #########################################################
     
     train_list, valid_list, test_list = get_file_lists(trainingdir)
-    batch_train = input_fn(filenames=train_list,mode="training", num_epochs=num_epochs, batch_size=batch_size)
+    batch_train = input_fn(filenames=train_list,mode="training", num_epochs=num_epochs, batch_size=size_batch_train)
     batch_valid = input_fn(filenames=valid_list, mode='validation', num_epochs=num_epochs, batch_size=size_batch_valid)
-    batch_test = input_fn(filenames=test_list, mode='testing', num_epochs=num_epochs, batch_size=size_batch_valid)
+    batch_test = input_fn(filenames=test_list, mode='testing', num_epochs=num_epochs, batch_size=size_batch_test)
         
     # Graph inputs
     x = tf.placeholder('float', shape=[None, 192, 192, 4], name='x')
@@ -158,9 +160,11 @@ def main(trainingdir, model, num_epochs, batch_size, learning_rate, logdir, rest
                 batch_images, batch_labels = sess.run(batch_train)
                 _,cost,summary_val,step,logits_val = sess.run([train_op,loss,summary_op,global_step,logits], feed_dict={x:batch_images, y:batch_labels})
                 writer.add_summary(summary_val,step)
+                
                 #validation
-                batch_images_valid, batch_labels_valid = sess.run(batch_valid)
-                cost_valid = sess.run(loss, feed_dict={x:batch_images_valid, y:batch_labels_valid})
+                if step % step_valid == 0:
+                    batch_images_valid, batch_labels_valid = sess.run(batch_valid)
+                    cost_valid = sess.run(loss, feed_dict={x:batch_images_valid, y:batch_labels_valid})
     
                 print('\nEpoch {}, batch {} -- Loss: {:.3f}, Validation Loss: {:.3f}'.format(epoch+1, step+1, cost, cost_valid))
                 
@@ -186,7 +190,9 @@ if __name__ == '__main__':
     parser.add_argument('-t', '--trainingdir', default=TRAININGDIR, help='Location of the TFRecors for training')
     parser.add_argument('-l', '--logdir', default=LOGDIR, help='Log dir for tfevents')
     parser.add_argument('-e', '--num_epochs', type=int, default=NUM_EPOCHS, help='Number of epochs')
-    parser.add_argument('-b', '--batch_size', type=int, default=BATCH_SIZE, help='Batch size')
+    parser.add_argument('-btr', '--size_batch_train', type=int, default=BATCH_SIZE_TRAIN, help='Batch size for training')
+    parser.add_argument('-bts', '--size_batch_test', type=int, default=BATCH_SIZE_TEST, help='Batch size for testing')
+    parser.add_argument('-sv', '--step_valid', type=int, default=STEP_VALID, help='frequency of validation batches')
     parser.add_argument('-lr', '--learning_rate', type=float, default=LEARNING_RATE, help='Learning rate')
     parser.add_argument('-r', '--restore', help='Path to model checkpoint to restore weights from.')
     parser.add_argument('-m', '--model', default=MODEL_TO_USE,help='Model to use, either zhixuhao or nuria.')
@@ -194,4 +200,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
     
     
-main(args.trainingdir,args.model, args.num_epochs, args.batch_size, args.learning_rate, args.logdir, args.restore)            
+main(args.trainingdir,args.model, args.num_epochs, args.size_batch_train, args.size_batch_test, args.step_valid, args.learning_rate, args.logdir, args.restore)            
