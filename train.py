@@ -178,10 +178,9 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, step
 
     #Predictions
         try:
-            y_pred = []
             x_test_batch = sess.run(batch_test)
-            sess.run([y_pred],feed_dict={x:x_test_batch})
-            print(y_pred)
+            sess.run(logits,feed_dict={x:x_test_batch})
+            print(logits)
 
         except tf.errors.OutOfRangeError:
             print("u fucked up")
