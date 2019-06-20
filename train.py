@@ -11,12 +11,14 @@ from tensorflow.python.keras import backend as K
     
 #Training parameters
 NUM_EPOCHS = 1
-BATCH_SIZE= 25
-LEARNING_RATE= 1e-4
-STEPS_SAVER =100
-MODEL_TO_USE="zhixuhao"
-TRAININGDIR="../BrainTumourImages/Generated/"
-LOGDIR='/tmp/aidl'
+BATCH_SIZE_TRAIN = 25
+BATCH_SIZE_TEST = 20
+STEP_VALID = 50
+LEARNING_RATE = 1e-4
+STEPS_SAVER = 100
+MODEL_TO_USE = "zhixuhao"
+TRAININGDIR = "../BrainTumourImages/Generated/"
+LOGDIR = '/tmp/aidl'
 
 #########################################################
 
