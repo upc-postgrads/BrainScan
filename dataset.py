@@ -95,3 +95,10 @@ def input_fn(filenames, perform_shuffle=False, num_epochs=1, batch_size=1):
     iterator = dataset.make_one_shot_iterator()
     batch_features, batch_labels = iterator.get_next()
     return batch_features, batch_labels
+
+
+#entrada labels 4 canales, softmax_cross_entropy, 50% imagenes tumor/no_tumor,
+#1epoch de training y 1epoch de validation
+#moure summary op.global_step, logits a cada 50
+#metrica IoU
+#hacer crops de las zonas de tumor
