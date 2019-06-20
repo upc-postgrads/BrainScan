@@ -24,7 +24,7 @@ LOGDIR = '/tmp/aidl'
 
 def count_records(path):
     
-    #function that returns the number of records in a set of TFRecords stored a directory. We will use it to count the number of
+    #function that returns the number of records in a set of TFRecords stored in a directory. We will use it to count the number of
     #training and validation data 
     
     num = 0
