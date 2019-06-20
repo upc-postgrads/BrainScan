@@ -172,7 +172,7 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, step
                     
 
                 #validation
-                if step % step_valid == 0:
+                if step % STEP_VALID == 0:
                     batch_images_valid, batch_labels_valid = sess.run(batch_valid)
                     cost_valid = sess.run(loss, feed_dict={x:batch_images_valid, y:batch_labels_valid})
                     IoU = sess.run(IoU_metrics, feed_dict={x:batch_images_valid, y:batch_labels_valid})
