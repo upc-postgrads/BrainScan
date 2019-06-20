@@ -20,10 +20,11 @@ LOGDIR='/tmp/aidl'
 
 #########################################################
 
-#number of training and validation data
-
-#function that returns the number of records in a set of TFRecords stored a directory
 def count_records(path):
+    
+    #function that returns the number of records in a set of TFRecords stored a directory. We will use it to count the number of
+    #training and validation data 
+    
     num = 0
     for record_file in os.listdir(path):
         TFRecord_path = os.path.join(path,record_file)
@@ -86,13 +87,11 @@ def loss_sparse(labels, logits):
 
 
 def main(trainingdir, model, num_epochs, batch_size, learning_rate, logdir, restore_weights): 
-
     
     global_step=tf.get_variable('global_step',dtype=tf.int32,initializer=0,trainable=False)    
-    #training
-    train_images = count_records(os.path.join(trainingdir, 'Training'))
-    #validation
-    valid_images = count_records(os.path.join(trainingdir, 'Validation'))
+    
+    train_images = count_records(os.path.join(trainingdir, 'Training')) #number of training images  
+    valid_images = count_records(os.path.join(trainingdir, 'Validation')) #number of validation images
 
     size_batch_valid = int(valid_images/int(train_images/batch_size))
     
