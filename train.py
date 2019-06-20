@@ -127,6 +127,7 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, step
     #Forward and backprop pass
     loss= tf.reduce_mean(loss_sparse(labels=y, logits=logits))
     tf.summary.scalar("loss", loss)
+    IoU_metrics = tf.metrics.mean_iou(labels=y, predictions=logits, num_classes=4)
     
     optimizer = tf.train.AdamOptimizer(learning_rate)
     train_op = optimizer.minimize(loss,global_step=global_step)
@@ -168,7 +169,8 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, step
                 if step % step_valid == 0:
                     batch_images_valid, batch_labels_valid = sess.run(batch_valid)
                     cost_valid = sess.run(loss, feed_dict={x:batch_images_valid, y:batch_labels_valid})
-                    print('\nEpoch {} -- Validation Loss: {:.3f}'.format(epoch+1, cost_valid))
+                    IoU = sess.run(IoU_metrics, feed_dict={x:batch_images_valid, y:batch_labels_valid})
+                    print('\nEpoch {} -- Validation Loss: {:.3f} and IoU Metrics: {:.3f}'.format(epoch+1, cost_valid, IoU))
                 
                 if step % STEPS_SAVER == 0:
                     print('Step {}\tSaving weights to {}'.format(step+1, model_checkpoint_path))
