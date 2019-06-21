@@ -2,9 +2,12 @@ import os
 import argparse
 import tensorflow as tf
 from dataset import *
-from utils import utils
 from tensorflow.python.keras import backend as K
 import numpy as np
+import sys
+from utils import utils
+
+
 
 
 
@@ -135,7 +138,7 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
     #Forward and backprop pass
     loss= tf.reduce_mean(loss_sparse(labels=y, logits=logits))
     tf.summary.scalar("loss", loss)
-    IoU_metrics = tf.metrics.mean_iou(labels=y, predictions=logits, num_classes=4)
+    #IoU_metrics = tf.metrics.mean_iou(labels=y, predictions=logits, num_classes=4)
 
     optimizer = tf.train.AdamOptimizer(learning_rate)
     train_op = optimizer.minimize(loss,global_step=global_step)
@@ -179,15 +182,16 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
 
                 #validation
                 cost_validation = []
-                IoU_validation = []
+                #IoU_validation = []
                 if step % step_valid == 0:
                     for batch in range(int(valid_images/size_batch_valid)):
                         batch_images_valid, batch_labels_valid = sess.run(batch_valid)
                         cost_valid = sess.run(loss, feed_dict={x:batch_images_valid, y:batch_labels_valid})
                         cost_validation.append(cost_valid)
-                        IoU = sess.run(IoU_metrics, feed_dict={x:batch_images_valid, y:batch_labels_valid})
-                        IoU_validation.append(IoU)
-                    print('\nEpoch {} -- Validation Loss: {:.3f} and IoU Metrics: {:.3f}'.format(epoch+1, np.mean(cost_validation), np.mean(IoU_validation)))
+                        #IoU = sess.run(IoU_metrics, feed_dict={x:batch_images_valid, y:batch_labels_valid})
+                        #IoU_validation.append(IoU)
+                    #print('\nEpoch {} -- Validation Loss: {:.3f} and IoU Metrics: {:.3f}'.format(epoch+1, np.mean(cost_validation), np.mean(IoU_validation)))
+                    print('\nEpoch {} -- Validation Loss: {:.3f}'.format(epoch+1, np.mean(cost_validation)))
 
 
                 #saving
