@@ -73,7 +73,7 @@ def unet(data, training=False, norm_option=False, drop_val=0.5):
     if norm_option == True:
         deconv1 = tf.layers.batch_normalization(deconv1)
     deconv1 = tf.nn.relu(deconv1)
-    concat1 = tf.stack([conv8,deconv1], axis=-1)
+    concat1 = tf.concat([conv8,deconv1], axis=-1)
     UpPath_conv1 = tf.layers.conv2d(concat1, 512, [3,3], strides=[1,1], padding='SAME', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*1024))))
     if norm_option == True:
         UpPath_conv1 = tf.layers.batch_normalization(UpPath_conv1)
@@ -87,7 +87,7 @@ def unet(data, training=False, norm_option=False, drop_val=0.5):
     if norm_option == True:
         deconv2 = tf.layers.batch_normalization(deconv2)
     deconv2 = tf.nn.relu(deconv2)
-    concat2 = tf.stack([conv6,deconv2], axis=-1)
+    concat2 = tf.concat([conv6,deconv2], axis=-1)
     UpPath_conv3 = tf.layers.conv2d(concat2, 256, [3,3], strides=[1,1], padding='SAME', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*512))))
     if norm_option == True:
         UpPath_conv3 = tf.layers.batch_normalization(UpPath_conv3)
@@ -101,7 +101,7 @@ def unet(data, training=False, norm_option=False, drop_val=0.5):
     if norm_option == True:
         deconv3 = tf.layers.batch_normalization(deconv3)
     deconv3 = tf.nn.relu(deconv3)
-    concat3 = tf.stack([conv4,deconv3], axis=-1)
+    concat3 = tf.concat([conv4,deconv3], axis=-1)
     UpPath_conv5 = tf.layers.conv2d(concat3, 128, [3,3], strides=[1,1], padding='SAME', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*256))))
     if norm_option == True:
         UpPath_conv5 = tf.layers.batch_normalization(UpPath_conv5)
@@ -115,7 +115,7 @@ def unet(data, training=False, norm_option=False, drop_val=0.5):
     if norm_option == True:
         deconv4 = tf.layers.batch_normalization(deconv4)
     deconv4 = tf.nn.relu(deconv4)
-    concat4 = tf.stack([conv2,deconv4], axis=-1)
+    concat4 = tf.concat([conv2,deconv4], axis=-1)
     UpPath_conv7 = tf.layers.conv2d(concat4, 64, [3,3], strides=[1,1], padding='SAME', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*128))))
     if norm_option == True:
         UpPath_conv7 = tf.layers.batch_normalization(UpPath_conv7)
