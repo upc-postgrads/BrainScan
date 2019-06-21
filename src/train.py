@@ -20,8 +20,13 @@ STEP_METRICS = 50
 LEARNING_RATE = 1e-4
 STEPS_SAVER = 100
 MODEL_TO_USE = "unet_keras"
-TRAININGDIR = "../BrainTumourImages/Generated/"
-LOGDIR = '/tmp/aidl'
+
+#Nuria
+TRAININGDIR = "C:/Users/nuria/Desktop/FinalProject/BrainTumour/Generated_TFRecords"
+LOGDIR = "C:/Users/nuria/Desktop/FinalProject/SavingWeights"
+#David
+#TRAININGDIR = "../BrainTumourImages/Generated/"
+#LOGDIR = '/tmp/aidl'
 
 
 #########################################################
