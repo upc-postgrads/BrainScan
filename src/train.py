@@ -4,6 +4,7 @@ import tensorflow as tf
 from dataset import *
 from utils import utils
 from tensorflow.python.keras import backend as K
+import numpy as np
 
 
 
@@ -13,6 +14,7 @@ from tensorflow.python.keras import backend as K
 NUM_EPOCHS = 1
 BATCH_SIZE_TRAIN = 25
 BATCH_SIZE_TEST = 20
+BATCH_SIZE_VALID = 25
 STEP_VALID = 50
 STEP_METRICS = 50
 LEARNING_RATE = 1e-4
@@ -20,7 +22,7 @@ STEPS_SAVER = 100
 MODEL_TO_USE = "unet_keras"
 TRAININGDIR = "../BrainTumourImages/Generated/"
 LOGDIR = '/tmp/aidl'
- 
+
 
 #########################################################
 
@@ -90,16 +92,15 @@ def loss_sparse(labels, logits):
 
 
 
-def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, step_valid, learning_rate, logdir, restore_weights):
+def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size_batch_valid, step_valid, step_metrics, steps_saver, learning_rate, logdir, restore_weights):
 
-    #param step_valid means that every step_valid batches of training images, a batch of image validation is going to be perfomed
+    #param step_valid: after how many batches of training images we perform the validation
+    #param step_metrics: after how many batches of training images we keep track of the summary
 
     global_step=tf.get_variable('global_step',dtype=tf.int32,initializer=0,trainable=False)
 
     train_images = count_records(os.path.join(trainingdir, 'Training')) #number of training images
     valid_images = count_records(os.path.join(trainingdir, 'Validation')) #number of validation images
-
-    size_batch_valid = int(valid_images/(int(train_images/size_batch_train)/step_valid))
 
     ######################################## DATAFLOW GRAPH #########################################################
 
@@ -159,26 +160,33 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, step
 
         #training, validation and saving
         for epoch in range(num_epochs):
-            for step in range(int(train_images/batch_size)):
+            for step in range(int(train_images/size_batch_train)):
 
                 #training
                 batch_images, batch_labels = sess.run(batch_train)
                 _,cost = sess.run([train_op,loss], feed_dict={x:batch_images, y:batch_labels})
-                print('\nEpoch {}, batch {} -- Loss: {:.3f}'.format(epoch+1, step+1, cost))                
-                
-                if step % STEP_METRICS == 0:
-                    summary_val,step,logits_val = sess.run([summary_op,global_step,logits], feed_dict={x:batch_images, y:batch_labels})
-                    writer.add_summary(summary_val,step)
-                    
+                print('\nEpoch {}, batch {} -- Loss: {:.3f}'.format(epoch+1, step+1, cost))
+
+                if step % step_metrics == 0:
+                    summary_val,step_gl,logits_val = sess.run([summary_op,global_step,logits], feed_dict={x:batch_images, y:batch_labels})
+                    writer.add_summary(summary_val,step_gl)
+
 
                 #validation
-                if step % STEP_VALID == 0:
-                    batch_images_valid, batch_labels_valid = sess.run(batch_valid)
-                    cost_valid = sess.run(loss, feed_dict={x:batch_images_valid, y:batch_labels_valid})
-                    IoU = sess.run(IoU_metrics, feed_dict={x:batch_images_valid, y:batch_labels_valid})
-                    print('\nEpoch {} -- Validation Loss: {:.3f} and IoU Metrics: {:.3f}'.format(epoch+1, cost_valid, IoU))
+                cost_validation = []
+                IoU_validation = []
+                if step % step_valid == 0:
+                    for batch in range(int(valid_images/size_batch_valid)):
+                        batch_images_valid, batch_labels_valid = sess.run(batch_valid)
+                        cost_valid = sess.run(loss, feed_dict={x:batch_images_valid, y:batch_labels_valid})
+                        cost_validation.append(cost_valid)
+                        IoU = sess.run(IoU_metrics, feed_dict={x:batch_images_valid, y:batch_labels_valid})
+                        IoU_validation.append(IoU)
+                    print('\nEpoch {} -- Validation Loss: {:.3f} and IoU Metrics: {:.3f}'.format(epoch+1, np.mean(cost_validation), np.mean(IoU_validation)))
 
-                if step % STEPS_SAVER == 0:
+
+                #saving
+                if step % steps_saver == 0:
                     print('Step {}\tSaving weights to {}'.format(step+1, model_checkpoint_path))
                     saver.save(sess, save_path=model_checkpoint_path,global_step=global_step)
 
@@ -201,7 +209,10 @@ if __name__ == '__main__':
     parser.add_argument('-e', '--num_epochs', type=int, default=NUM_EPOCHS, help='Number of epochs')
     parser.add_argument('-btr', '--size_batch_train', type=int, default=BATCH_SIZE_TRAIN, help='Batch size for training')
     parser.add_argument('-bts', '--size_batch_test', type=int, default=BATCH_SIZE_TEST, help='Batch size for testing')
-    parser.add_argument('-sv', '--step_valid', type=int, default=STEP_VALID, help='frequency of validation batches')
+    parser.add_argument('-bval', '--size_batch_valid', type=int, default=BATCH_SIZE_VALID, help='Batch size for validation')
+    parser.add_argument('-sv', '--step_valid', type=int, default=STEP_VALID, help='frequency of validation within training batches')
+    parser.add_argument('-sm', '--step_metrics', type=int, default=STEP_METRICS, help='frequency of summary within training batches')
+    parser.add_argument('-ss', '--steps_saver', type=int, default=STEPS_SAVER, help='frequency of weight saving within training batches')
     parser.add_argument('-lr', '--learning_rate', type=float, default=LEARNING_RATE, help='Learning rate')
     parser.add_argument('-r', '--restore', help='Path to model checkpoint to restore weights from.')
     parser.add_argument('-m', '--model', default=MODEL_TO_USE,help='Model to use, either unet_keras or unet_tensorflow.')
@@ -209,4 +220,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
 
-main(args.trainingdir,args.model, args.num_epochs, args.size_batch_train, args.size_batch_test, args.step_valid, args.learning_rate, args.logdir, args.restore)
+main(args.trainingdir,args.model, args.num_epochs, args.size_batch_train, args.size_batch_test, args.size_batch_valid, args.step_valid, args.step_metrics, args.steps_saver, args.learning_rate, args.logdir, args.restore)
