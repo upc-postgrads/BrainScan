@@ -5,7 +5,7 @@ import glob
 
 def get_file_lists(data_dir):
 
-    #This function returns two lists (train_list and valid_list) containing the directories of all the files in the
+    #This function returns three lists (train_list, valid_list and test_list) containing the directories of all the files in the
     #specified path
     #Parameter: data_dir is the directory where the TFRecords are stored.
 
