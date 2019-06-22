@@ -174,7 +174,6 @@ class GenerateTFRedord:
                     
     def generate_tfrecords_for_validation(self):
         for i,j in enumerate(list(range(int(self.PATIENT_END_TRAINING * (1 - percent_for_validation/100) + 1), self.PATIENT_END_TRAINING + 1))):
-            print(j)
             if i<int(self.number_of_volumes_to_process * percent_for_validation/100):
                 inputFileVolume=os.path.join(self.imagePathTR,"BRATS_%03d.nii.gz" % (j))
                 InputFileLabel=os.path.join(self.labelPathTR,"BRATS_%03d.nii.gz" % (j))
