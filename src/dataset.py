@@ -1,11 +1,11 @@
 #https://medium.com/ymedialabs-innovation/how-to-use-dataset-and-iterators-in-tensorflow-with-code-samples-3bb98b6b74ab
 import tensorflow as tf 
 import glob
-#Data pipelin using TFRecords
+#Data pipeline using TFRecords
 
 def get_file_lists(data_dir):
 
-    #This function returns two lists (train_list and valid_list) containing the directories of all the files in the
+    #This function returns three lists (train_list, valid_list and test_list) containing the directories of all the files in the
     #specified path
     #Parameter: data_dir is the directory where the TFRecords are stored.
 
