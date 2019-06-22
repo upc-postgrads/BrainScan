@@ -1,7 +1,7 @@
 #https://medium.com/ymedialabs-innovation/how-to-use-dataset-and-iterators-in-tensorflow-with-code-samples-3bb98b6b74ab
 import tensorflow as tf 
 import glob
-#Data pipelin using TFRecords
+#Data pipeline using TFRecords
 
 def get_file_lists(data_dir):
 
