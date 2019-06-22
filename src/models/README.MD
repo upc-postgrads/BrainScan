@@ -6,7 +6,10 @@ The U-Net, which was first introduced in the paper _U-Net: Convolutional Network
 
 The picture below depicts the U-Net architecture presented on the already mentioned paper.
 
-![Unet.png](../../data/Unet.jpg)
+<p align="center">
+<img src="../../data/Unet.jpg" width="575">
+</p>
+
 
 ### unet_tensorflow.py
 
