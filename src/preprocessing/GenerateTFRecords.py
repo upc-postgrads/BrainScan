@@ -86,7 +86,6 @@ class GenerateTFRedord:
             return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
 
         outputFile=os.path.basename(inputFileVolume).replace("nii.gz", "tfrecords")
-        #outputFileValidation=os.path.join(self.outputImagePathVL,outputFile)
         
         if is_train_tfrecord:
             outputFile=os.path.join(self.outputImagePathTR,outputFile)
@@ -122,13 +121,6 @@ class GenerateTFRedord:
             if not ImageEmpty:
                 valid_images.append(i)
 
-
-        #if not is_test_tfrecord:
-           # number_of_images_for_validation=int(utils.percentage(self.percent_for_validation,len(valid_images)))
-            #validation_list = random.sample(valid_images,number_of_images_for_validation)
-       # else:
-           # validation_list =[]
-
         for i in valid_images:
 
             frame_0_gray_scale= self.get_gray_scale(frame0[:, :, i])
@@ -156,10 +148,6 @@ class GenerateTFRedord:
                        'depth': _int64_feature(self.DEPTH),
                        }))
 
-           # if not i in validation_list:
-            #    writer.write(example.SerializeToString())
-           # else:
-              #  writer_validation.write(example.SerializeToString())
             
         if is_train_tfrecord:
             outputFile=os.path.join(self.outputImagePathTR,outputFile)
@@ -173,14 +161,6 @@ class GenerateTFRedord:
             outputFile=os.path.join(self.outputimagePathTS,outputFile)
             writer.close()
             print("Generated TFRecord: %s" % outputFile)
-        
-        #writer.close()
-        #print("Generated TFRecord: %s" % outputFile)
-
-        #if is_val_tfrecord:
-            #writer_validation.close()
-           # print("Generated TFRecord: %s" % outputFileValidation)
-
 
         return
 
@@ -194,7 +174,7 @@ class GenerateTFRedord:
                     
     def generate_tfrecords_for_validation(self):
         for i,j in enumerate(list(range(int(self.PATIENT_END_TRAINING * (1 - percent_for_validation/100) + 1), self.PATIENT_END_TRAINING + 1))):
-            #print(i,j)
+            print(j)
             if i<int(self.number_of_volumes_to_process * percent_for_validation/100):
                 inputFileVolume=os.path.join(self.imagePathTR,"BRATS_%03d.nii.gz" % (j))
                 InputFileLabel=os.path.join(self.labelPathTR,"BRATS_%03d.nii.gz" % (j))
@@ -224,7 +204,7 @@ if __name__ == '__main__':
     labelPathTR = "/Volumes/Macintosh_SSD_Samsung_EVO_256_GB/BrainTumourImages/Original/labelsTr"
     imagePathTS = "/Volumes/Macintosh_SSD_Samsung_EVO_256_GB/BrainTumourImages/Original/imagesTs"
     outputDir = "/Volumes/Macintosh_SSD_Samsung_EVO_256_GB/BrainTumourImages/Generated"
-    number_of_volumes_to_process=10
+    number_of_volumes_to_process=484
     percent_for_validation=10
     generator = GenerateTFRedord(imagePathTR,labelPathTR,imagePathTS,outputDir,number_of_volumes_to_process,percent_for_validation)
     generator.generate_tfrecords()
