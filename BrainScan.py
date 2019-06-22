@@ -3,12 +3,14 @@ import os
 import numpy as np
 import tensorflow as tf
 import utils
+import Generate_Batch
 
 
+BATCH_SIZE_TRAIN = 25
+BATCH_SIZE_TEST = 20
+NUM_EPOCHS = 1
 STEPS_LOSS_LOG = 50
 STEPS_SAVER = 100
-NUM_EPOCHS = 1
-BATCH_SIZE= 25
 LEARNING_RATE= 1e-4
 TRAININGDIR= '/Users/aitorjara/Desktop//BrainTumourImages/Generated/'
 LOGDIR='/tmp/aidl'
@@ -212,7 +214,39 @@ def unet_model(data, training=False, norm_option=False, drop_val=0.5):
     if norm_option == True:
         UpPath_conv9 = tf.layers.batch_normalization(UpPath_conv9)
     UpPath_conv9 = tf.nn.relu(UpPath_conv9)    
-    return UpPath_conv9    
+    return UpPath_conv9   
+
+#NºExamples
+def count_records(path):
+    
+    #function that returns the number of records in a set of TFRecords stored a directory. We will use it to count the number of
+    #training and validation data 
+    
+    num = 0
+    for record_file in os.listdir(path):
+        TFRecord_path = os.path.join(path,record_file)
+        for record in tf.io.tf_record_iterator(TFRecord_path):
+            num += 1
+    return num
+
+# Metric
+def dice_coeff(y_true, y_pred):
+    smooth = 1.
+    y_true_f = K.flatten(y_true)
+    y_pred_f = K.flatten(y_pred)
+    intersection = K.sum(y_true_f * y_pred_f)
+    score = (2. * intersection + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) + smooth)
+    return score
+
+def dice_loss(y_true, y_pred):
+    loss = 1 - dice_coeff(y_true, y_pred)
+    return loss
+    
+def dice_coef_multilabel(y_true, y_pred, numLabels=5):
+    dice=0
+    for index in range(numLabels):
+        dice -= dice_coeff(y_true[:,index,:,:,:], y_pred[:,index,:,:,:])
+    return dice  
 
 # Loss
 def loss_rara1(labels, logits):
@@ -244,28 +278,12 @@ def loss_sparse(labels, logits):
     return loss
     #return tf.nn.sparse_softmax_cross_entropy_with_logits(labels=labels, logits=logits)
     #return tf.nn.softmax_cross_entropy_with_logits_v2(logits=logits, labels=labels)
-
-# Metric
-def dice_coeff(y_true, y_pred):
-    smooth = 1.
-    y_true_f = K.flatten(y_true)
-    y_pred_f = K.flatten(y_pred)
-    intersection = K.sum(y_true_f * y_pred_f)
-    score = (2. * intersection + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) + smooth)
-    return score
-
-def dice_loss(y_true, y_pred):
-    loss = 1 - dice_coeff(y_true, y_pred)
-    return loss
-    
-def dice_coef_multilabel(y_true, y_pred, numLabels=5):
-    dice=0
-    for index in range(numLabels):
-        dice -= dice_coeff(y_true[:,index,:,:,:], y_pred[:,index,:,:,:])
-    return dice  
  
 
 def main(trainingdir, num_epochs, batch_size, learning_rate, logdir, restore_weights): 
+    ''':param step_valid:   after how many batches of training images we perform the validation
+       :param step_metrics: after how many batches of training images we keep track of the summary'''
+
      # ----------------- TRAINING LOOP SETUP ---------------- #
     logdir = os.path.expanduser(logdir)
     utils.ensure_dir(logdir)
@@ -273,13 +291,22 @@ def main(trainingdir, num_epochs, batch_size, learning_rate, logdir, restore_wei
     # ------------------ DEFINITION PHASE ------------------ #
     global_step  = tf.get_variable('global_step', dtype=tf.int32, initializer=0, trainable=False)
     
+    #Images
+    train_images = count_records(os.path.join(trainingdir, 'Training')) #number of training images  
+    valid_images = count_records(os.path.join(trainingdir, 'Validation')) #number of validation images
+    size_batch_valid = int(valid_images/(int(train_images/size_batch_train)/step_valid)) #param step_valid means that every step_valid batches of training images, a batch of image validation is going to be perfomed
+    tf.summary.image("input_0",tf.expand_dims(x[:,:,:,0],axis=-1))
+    tf.summary.image("labels",tf.cast(y,tf.float32))
+    tf.summary.image("prediction", logits[:,:,:,1:])
+    tf.summary.histogram("logits",logits)
+    
     # Loss
-    loss_op = tf.reduce_mean(loss_sparse(labels=y, logits=logits)) #loss_op = tf.losses.get_total_loss()
-    tf.summary.scalar('loss', loss_op)
+    loss = tf.reduce_mean(loss_sparse(labels=y, logits=logits)) #loss = tf.losses.get_total_loss()
+    tf.summary.scalar('loss', loss)
 
     # Optimizer
     optimizer = tf.train.AdamOptimizer(learning_rate)
-    train_step = optimizer.minimize(loss_op, global_step=global_step )
+    train_step = optimizer.minimize(loss, global_step=global_step )
     
     # Summary writer
     writer = tf.summary.FileWriter(logdir, graph=tf.get_default_graph())
@@ -299,11 +326,11 @@ def main(trainingdir, num_epochs, batch_size, learning_rate, logdir, restore_wei
     try:
         while True:
             # Run the train step
-            _, loss, step, summ_val = sess.run([train_step, loss_op, global_step, summary_op])
+            _, loss, step, summ_val = sess.run([train_step, loss, global_step, summary_op])
             # Print how the loss is evolving per step in order to check if the model is converging
             if step % STEPS_LOSS_LOG == 0:
                 print('Step {}\tLoss {}'.format(step, loss))
-                writer.add_summary(summ_val, loss_op,  global_step=step)
+                writer.add_summary(summ_val, loss,  global_step=step)
             # Save the graph definition and its weights
             if step % STEPS_SAVER == 0:
                 print('Step {}\tSaving weights to{}'.format(step, model_checkpoint_path))
@@ -315,10 +342,12 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Pipeline execution')
     parser.add_argument('trainingdir', default=TRAININGDIR, help='Path to the CSV decribing the dataset')
     parser.add_argument('-e', '--num_epochs', type=int, default=NUM_EPOCHS, help='Number of epochs')
-    parser.add_argument('-b', '--batch_size', type=int, default=BATCH_SIZE, help='Batch size')
+    parser.add_argument('-b', '--batch_size_train', type=int, default=BATCH_SIZE_TRAIN, help='Batch size for training')
+    parser.add_argument('-b', '--batch_size_test', type=int, default=BATCH_SIZE_TEST, help='Batch size for testing')
     parser.add_argument('-lr', '--learning_rate', type=float, default=LEARNING_RATE, help='Learning rate')
     parser.add_argument('-l', '--logdir', default=LOGDIR, help='Log dir for tfevents')
     parser.add_argument('-r', '--restore', help='Path to model checkpoint to restore weights from.')
+   
     args = parser.parse_args()
 
     main(args.trainingdir, args.num_epochs, args.batch_size, args.learning_rate, args.logdir, args.restore)

@@ -30,6 +30,9 @@ LOGDIR = "C:/Users/nuria/Desktop/FinalProject/SavingWeights"
 #David
 #TRAININGDIR = "../BrainTumourImages/Generated/"
 #LOGDIR = '/tmp/aidl'
+#Aitor
+#TRAININGDIR = /Users/aitorjara/Desktop/BrainTumourImages/Generated/
+#LOGDIR = /Users/aitorjara/Desktop/BrainTumourImages/tmp
 
 
 #########################################################
