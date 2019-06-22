@@ -5,8 +5,8 @@ In this folder of the repository, we can find the two different models that we h
 The U-Net, which was first introduced in the paper _U-Net: Convolutional Networks for Biomedical Image Segmentation_ ([see it here](https://arxiv.org/pdf/1505.04597.pdf)), is mainly splitted into three parts: _downsampling path_, _bottleneck_ and _upsampling path_. The former consists on performing a sequence of convolutions iterspersed with max pooling operations whereas the latter carries out convolutions as well but interspersed with deconvolutions. Moreover, the feature maps obtained in the downsampling are concatenated with the ones obtained in the upsampling by means of the so called _skip connections_ so as to recover the information regarding the characteristic's localization.
 
 The picture below depicts the U-Net architecture presented on the already mentioned paper.
-![alt text](https://github.com/upc-postgrads/BrainScan/tree/master/data/Unet.jpg)
 
+![Unet.png](../../data/Unet.jpg)
 
 ### unet_tensorflow.py
 
