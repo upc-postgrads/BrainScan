@@ -25,14 +25,14 @@ STEPS_SAVER = 100
 MODEL_TO_USE = "unet_keras"
 
 #Nuria
-TRAININGDIR = "C:/Users/nuria/Desktop/FinalProject/BrainTumour/Generated_TFRecords"
-LOGDIR = "C:/Users/nuria/Desktop/FinalProject/SavingWeights"
+#TRAININGDIR = "C:/Users/nuria/Desktop/FinalProject/BrainTumour/Generated_TFRecords"
+#LOGDIR = "C:/Users/nuria/Desktop/FinalProject/SavingWeights"
 #David
 #TRAININGDIR = "../BrainTumourImages/Generated/"
 #LOGDIR = '/tmp/aidl'
 #Aitor
-#TRAININGDIR = "/Volumes/Macintosh_SSD_Samsung_EVO_256_GB/BrainTumourImages/Generated"
-#LOGDIR = "/Users/aitorjara/tmp/aidl"
+TRAININGDIR = "/Volumes/Macintosh_SSD_Samsung_EVO_256_GB/BrainTumourImages/Generated"
+LOGDIR = "/Users/aitorjara/tmp/aidl"
 
 
 #########################################################
