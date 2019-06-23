@@ -7,6 +7,10 @@ It consists on implementing the U-net model for medical image segmentation, prec
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
+The BRATS challenge dataset was use to train and test this model.
+Find the data on the following link:
+http://medicaldecathlon.com/
+
 ### Prerequisites
 
 For our model to work all of the dependencies are on the requirements.txt.
