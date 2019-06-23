@@ -6,7 +6,7 @@ from tensorflow.python.keras import backend as K
 import numpy as np
 import sys
 from utils import utils
-
+tf.enable_eager_execution()
 
 
 
@@ -45,7 +45,7 @@ def count_records(path):
     num = 0
     for record_file in os.listdir(path):
         TFRecord_path = os.path.join(path,record_file)
-        for record in tf.io.tf_record_iterator(TFRecord_path):
+        for record in tf.data.TFRecordDataset(TFRecord_path):
             num += 1
     return num
 
