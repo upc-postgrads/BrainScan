@@ -56,45 +56,32 @@ def input_fn(filenames, mode, num_epochs=1, batch_size=1):
 
         #Add data augmentation here
         with tf.name_scope('data_augmentation'):
-            frames=tf.image.central_crop(frames,0.8)
-            label=tf.image.central_crop(label,0.8)
-        #@tf.function()
-        #def customized_cropp():
-            #if mode = 'train':
-                #r_path = r_path_train
-            #elif mode = 'test':
-                #r_path = r_path_test
-            #elif mode = 'label':
-                #r_path = r_path_label
-            #
-            #max_hei = 0
-            #max_wid = 0
-            #cropped_images = []
-            #for filename in os.listdir(r_path):
-                #data = img.imread(r_path + filename)
-                #mask = data > 0             # Mask of non-black pixels (assuming image has a single channel).
-                #coords = np.argwhere(mask)  # Coordinates of non-black pixels.
-                #try:                        # Bounding box of non-black pixels.
-                    #x0, y0 = coords.min(axis=0)
-                    #x1, y1 = coords.max(axis=0) + 1   # slices are exclusive at the top
-                #except:
-                    #pass
-            #
-                #cropped = data[x0:x1, y0:y1]          # Get the contents of the bounding box.
-                #cropped_images.append(cropped)        # Save the cropped images in a list as data
-                #if cropped.shape[0] > max_hei:
-                    #max_hei = cropped.shape[0]
-                #if cropped.shape[1] > max_hei:
-                    #max_wid = cropped.shape[1]
-            #    black = [0,0,0]
-                #for image in cropped_images:
-                    #constant=cv2.copyMakeBorder(image, (max_hei - image.shape[0])/2, (max_wid - image.shape[0])/2, (max_wid -    image.shape[0])/2, (max_wid - #image.shape[0])/2, cv2.BORDER_CONSTANT,value=black)
-        with tf.name_scope('preprocessing'):
-            frames = tf.reshape(frames,(height, width, depth))
-            label = tf.reshape(label,(height, width,-1))
-            tf.expand_dims(label, 1).shape
-
-        return frames, label
+            #frames=tf.image.central_crop(frames,0.8)
+            #label=tf.image.central_crop(label,0.8)
+            @tf.function()
+            def customized_cropp():
+                max_hei = 0
+                max_wid = 0
+                cropped_images = []
+                   for i in frames:
+                       mask = frames > 0             # Mask of non-black pixels (assuming image has a single channel).
+                       coords = np.argwhere(mask)  # Coordinates of non-black pixels.
+                       try:                        # Bounding box of non-black pixels.
+                           x0, y0 = coords.min(axis=0)
+                           x1, y1 = coords.max(axis=0) + 1   # slices are exclusive at the top
+                       except:
+                            pass
+                       cropped= frames[x0:x1, y0:y1]          # Get the contents of the bounding box.
+                       cropped_images.append(cropped)        # Save the cropped images in a list as data
+                       if cropped.shape[0] > max_hei:
+                           max_hei = cropped.shape[0]
+                       if cropped.shape[1] > max_hei:
+                           max_wid = cropped.shape[1]
+                    black = [0,0,0]
+                       for image in cropped_images:
+                       constant=cv2.copyMakeBorder(image, (max_hei - image.shape[0])/2, (max_wid - image.shape[0])/2, (max_wid -    image.shape[0])/2, (max_wid - #image.shape[0])/2, cv2.BORDER_CONSTANT,value=black)
+        
+            return frames, label
 
 
     dataset = tf.data.TFRecordDataset(filenames=filenames)
