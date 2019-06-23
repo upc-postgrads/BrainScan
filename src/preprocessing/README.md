@@ -1,12 +1,12 @@
 ### GenerateTFRecords.py
-Due to the nature of this dataset, where every patient is represented with 4 different volumes of the brain, the idea of creating a generator was in someway problematic. As we had to "slice" the data in 2d images we came up with the idea of slicing the first slide of every volume and storing it as if they were different channels from the same image, processing it and doing it "n" times up until the last image, and with all the patients, ending up with a really long tensor of binary data called TFRecord, compatible with the tensorflow function tf.data.TFRecordsDataset(). 
+Due to the nature of this dataset, where every patient is represented with 4 different volumes of the brain, the idea of creating a generator was somehow problematic. As we had to "slice" the data in 2d images we came up with the idea of slicing the first slide of every volume and storing it as if they were different channels from the same image, processing it and doing it "n" times up until the last image, and with all the patients, ending up with a really long tensor of binary data called TFRecord, compatible with the tensorflow function tf.data.TFRecordsDataset(). 
 
 This generator starts defining some functions that allow us to:
 1- Store the ID of every patient
 2- Discard fully black images that would add noise to the training
 3- And normalize and also store the valid images in grayscale
 
-Having defined these helper blocks defined, we then execute the main function, which does the following:
+Having defined these helper blocks, we then execute the main function, which does the following:
 
 1- First, it defines different "writers" with tf.python_io.TFRecordWriter for 3 different batches, which are training, validation and testing.
 2- Then we use the library Nibabel which is useful for transforming .NIFTI images into raw data.
