@@ -1,7 +1,7 @@
 import os
 import argparse
 import tensorflow as tf
-from dataset import *
+from dataset_mio import *
 from tensorflow.python.keras import backend as K
 import numpy as np
 import sys
@@ -22,7 +22,7 @@ STEP_VALID = 50
 STEP_METRICS = 50
 LEARNING_RATE = 1e-4
 STEPS_SAVER = 100
-MODEL_TO_USE = "unet_keras"
+MODEL_TO_USE = "unet_tensorflow"
 
 #Nuria
 #TRAININGDIR = "C:/Users/nuria/Desktop/FinalProject/BrainTumour/Generated_TFRecords"
@@ -32,7 +32,7 @@ MODEL_TO_USE = "unet_keras"
 #LOGDIR = '/tmp/aidl'
 #Aitor
 TRAININGDIR = "/Volumes/Macintosh_SSD_Samsung_EVO_256_GB/BrainTumourImages/Generated"
-LOGDIR = "/Users/aitorjara/Desktop/BrainTumourImages/tmp"
+LOGDIR = "/Users/aitorjara/BrainTumourImages/tmp/aidl"
 
 
 #########################################################

@@ -50,11 +50,11 @@ def input_fn(filenames, mode, num_epochs=1, batch_size=1):
         width= tf.cast(sample['width'], tf.int32)
         depth= tf.cast(sample['depth'], tf.int32)
 
-        frames = tf.reshape(frames,(height, width, depth))
-        label = tf.reshape(label,(height, width,-1))
-        tf.expand_dims(label, 1).shape
+        with tf.name_scope('preprocessing'):
+            frames = tf.reshape(frames,(height, width, depth))
+            label = tf.reshape(label,(height, width,-1))
+            tf.expand_dims(label, 1).shape
 
-        #Add data augmentation here
         with tf.name_scope('data_augmentation'):
             frames=tf.image.central_crop(frames,0.8)
             label=tf.image.central_crop(label,0.8)
@@ -89,13 +89,8 @@ def input_fn(filenames, mode, num_epochs=1, batch_size=1):
             #    black = [0,0,0]
                 #for image in cropped_images:
                     #constant=cv2.copyMakeBorder(image, (max_hei - image.shape[0])/2, (max_wid - image.shape[0])/2, (max_wid -    image.shape[0])/2, (max_wid - #image.shape[0])/2, cv2.BORDER_CONSTANT,value=black)
-        with tf.name_scope('preprocessing'):
-            frames = tf.reshape(frames,(height, width, depth))
-            label = tf.reshape(label,(height, width,-1))
-            tf.expand_dims(label, 1).shape
 
         return frames, label
-
 
     dataset = tf.data.TFRecordDataset(filenames=filenames)
 
@@ -107,13 +102,11 @@ def input_fn(filenames, mode, num_epochs=1, batch_size=1):
         # Randomizes input using a window of 256 elements (read into memory)
         dataset = dataset.shuffle(buffer_size=256)
 
-
     # Repeats dataset this # times
     dataset = dataset.repeat(num_epochs)
 
     # Batch size to use
     dataset = dataset.batch(batch_size)
-
 
     iterator = dataset.make_one_shot_iterator()
     batch_features, batch_labels = iterator.get_next()
