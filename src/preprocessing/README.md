@@ -1,5 +1,5 @@
 ### GenerateTFRecords.py
-Due to the nature of this dataset, where every patient is represented with 4 different volumes of the brain, the idea of creating a generator was somehow problematic. As we had to "slice" the data in 2d images we came up with the idea of slicing the first slide of every volume and storing it as if they were different channels from the same image, processing it and doing it "n" times up until the last image, and with all the patients, ending up with a really long tensor of binary data called TFRecord, compatible with the tensorflow function tf.data.TFRecordsDataset(). 
+Due to the nature of this dataset, where every patient is represented with 4 different volumes of the brain, the idea of creating a generator was somehow problematic. As we had to "slice" the data in 2d images we came up with the idea of slicing the first slice of every volume and storing it as if they were different channels from the same image, processing it and doing it "n" times up until the last image, and with all the patients, ending up with a really long tensor of binary data called TFRecord, compatible with the tensorflow function tf.data.TFRecordsDataset(). 
 
 This generator starts defining some functions that allow us to:<br />
 1- Store the ID of every patient<br />
