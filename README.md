@@ -14,9 +14,9 @@ http://medicaldecathlon.com/
 ### Prerequisites
 
 For our model to work all of the dependencies are on the requirements.txt.
-
+Run the following command line on your local repository.
 ```
-Give examples
+pip install -r requirements.txt
 ```
 
 ### Installing
