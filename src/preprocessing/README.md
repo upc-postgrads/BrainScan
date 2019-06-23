@@ -7,7 +7,7 @@ This generator starts defining some functions that allow us to:<br />
 3- Normalize and also store the valid images in grayscale<br />
 <br />
 After having defined these helper blocks, then we execute the main function, which does the following:
-<br />
+<br /><br />
 1- First, it defines different "writers" with tf.python_io.TFRecordWriter for 3 different batches, which are training, validation and testing.<br /><br />
 2- Then we use the library Nibabel which is useful for transforming .NIFTI images into raw data.<br />
 3- Wehis slice this raw 3D data in smaller 2D images and we do it with the 4 volumes from only 1 patient, so that we end up with 155 * 4 images<br /><br />
