@@ -86,7 +86,6 @@ class GenerateTFRedord:
             return tf.train.Feature(bytes_list=tf.train.BytesList(value=[value]))
 
         outputFile=os.path.basename(inputFileVolume).replace("nii.gz", "tfrecords")
-        #outputFileValidation=os.path.join(self.outputImagePathVL,outputFile)
         
         if is_train_tfrecord:
             outputFile=os.path.join(self.outputImagePathTR,outputFile)
@@ -122,13 +121,6 @@ class GenerateTFRedord:
             if not ImageEmpty:
                 valid_images.append(i)
 
-
-        #if not is_test_tfrecord:
-           # number_of_images_for_validation=int(utils.percentage(self.percent_for_validation,len(valid_images)))
-            #validation_list = random.sample(valid_images,number_of_images_for_validation)
-       # else:
-           # validation_list =[]
-
         for i in valid_images:
 
             frame_0_gray_scale= self.get_gray_scale(frame0[:, :, i])
@@ -155,33 +147,19 @@ class GenerateTFRedord:
                        'width': _int64_feature(self.WIDTH),
                        'depth': _int64_feature(self.DEPTH),
                        }))
-
-           # if not i in validation_list:
-            #    writer.write(example.SerializeToString())
-           # else:
-              #  writer_validation.write(example.SerializeToString())
             
-        if is_train_tfrecord:
-            outputFile=os.path.join(self.outputImagePathTR,outputFile)
+            if is_train_tfrecord or is_test_tfrecord:
+                writer.write(example.SerializeToString())
+            elif is_val_tfrecord:
+                writer_validation.write(example.SerializeToString())
+
+        if is_train_tfrecord or is_test_tfrecord:
             writer.close()
             print("Generated TFRecord: %s" % outputFile)
-        elif is_val_tfrecord:
-            outputFile=os.path.join(self.outputImagePathVL, outputFile)
-            writer_validation.close()
-            print("Generated TFRecord: %s" % outputFile)
-        elif is_test_tfrecord:
-            outputFile=os.path.join(self.outputimagePathTS,outputFile)
-            writer.close()
+        else:
+            writer_validation.close() 
             print("Generated TFRecord: %s" % outputFile)
         
-        #writer.close()
-        #print("Generated TFRecord: %s" % outputFile)
-
-        #if is_val_tfrecord:
-            #writer_validation.close()
-           # print("Generated TFRecord: %s" % outputFileValidation)
-
-
         return
 
     def generate_tfrecords_for_training(self):
