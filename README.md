@@ -1,6 +1,7 @@
-# Project Title
+# BrainScan
 
-One Paragraph of project description goes here
+This is project is the result of the final asignment from the UPC Postgraduate in Artificial Intelligence with Deep Learning.
+It consists on implementing the U-net model for medical image segmentation, precisly for brain tumor segmentation.
 
 ## Getting Started
 
@@ -8,7 +9,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
+For our model to work all of the dependencies are on the requirements.txt.
 
 ```
 Give examples
