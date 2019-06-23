@@ -149,7 +149,7 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
     train_op = optimizer.minimize(loss,global_step=global_step)
 
     # Weight saver
-    model_checkpoint_path = os.path.join(logdir, 'Checkpoint')
+    # model_checkpoint_path = os.path.join(logdir, 'Checkpoint')
     saver = tf.train.Saver()
 
     ######################################## RUN SESSION #########################################################
