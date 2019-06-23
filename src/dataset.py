@@ -1,5 +1,5 @@
 #https://medium.com/ymedialabs-innovation/how-to-use-dataset-and-iterators-in-tensorflow-with-code-samples-3bb98b6b74ab
-import tensorflow as tf 
+import tensorflow as tf
 import glob
 #Data pipeline using TFRecords
 
@@ -82,4 +82,6 @@ def input_fn(filenames, mode, num_epochs=1, batch_size=1):
 
     iterator = dataset.make_one_shot_iterator()
     batch_features, batch_labels = iterator.get_next()
+    batch_labels = tf.one_hot(indices=tf.squeeze(batch_labels), depth=4)
+    
     return batch_features, batch_labels
