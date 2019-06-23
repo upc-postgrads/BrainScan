@@ -57,7 +57,8 @@ def input_fn(filenames, mode, num_epochs=1, batch_size=1):
         #Add data augmentation here
         frames=tf.image.central_crop(frames,0.8)
         label=tf.image.central_crop(label,0.8)
-
+        #cropped_frames, cropped_label = customized_crop(frames,label)  #See function at the end of script
+        
         return frames, label
 
 
@@ -85,3 +86,33 @@ def input_fn(filenames, mode, num_epochs=1, batch_size=1):
     batch_labels = tf.one_hot(indices=tf.squeeze(batch_labels), depth=4)
     
     return batch_features, batch_labels
+
+
+#@tf.function
+#def customized_crop(frames, label):
+#    max_hei = 0
+#    max_wid = 0
+#    black = [0,0,0]
+#    cropped_images = []
+#    
+#    mask = frames > 0             # Mask of non-black pixels (assuming image has a single channel).
+#    coords = np.argwhere(mask) # Coordinates of non-black pixels.
+#
+#    try:                                 
+#        x0, y0 = coords.min(axis=0)       # Bounding box of non-black pixels.
+#        x1, y1 = coords.max(axis=0) + 1   # slices are exclusive at the top
+#    except:
+#         pass
+#
+#    cropped= frame[x0:x1, y0:y1]          # Get the contents of the bounding box.
+#    cropped_images.append(cropped)        # Save the cropped images in a list as data
+#
+#    if cropped.shape[0] > max_hei:        
+#        max_hei = cropped.shape[0]
+#    if cropped.shape[1] > max_hei:
+#        max_wid = cropped.shape[1]
+#
+#    frames=cv2.copyMakeBorder(frame, (max_hei - frame.shape[0])/2, (max_wid - frame.shape[0])/2, (max_wid -    frame.shape[0])/2, (max_wid - frame.shape[0])/2, cv2.BORDER_CONSTANT,value=black)
+#    label=cv2.copyMakeBorder(label, (max_hei - label.shape[0])/2, (max_wid - label.shape[0])/2, (max_wid -    label.shape[0])/2, (max_wid - label.shape[0])/2, cv2.BORDER_CONSTANT,value=black)
+#    
+#    return frames, label

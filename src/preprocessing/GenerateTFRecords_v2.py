@@ -3,7 +3,9 @@ import os
 from PIL import Image
 import numpy as np
 import tensorflow as tf
-from utils import utils
+import sys
+sys.path.insert(0, '../utils')
+import utils
 import random
 
 class GenerateTFRedord:
