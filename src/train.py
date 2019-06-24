@@ -15,8 +15,8 @@ from utils import utils
 
 #Training parameters
 NUM_EPOCHS = 1
-BATCH_SIZE_TRAIN = 25
-BATCH_SIZE_TEST = 20
+BATCH_SIZE_TRAIN = 2
+BATCH_SIZE_TEST = 2
 BATCH_SIZE_VALID = 25
 STEP_VALID = 50
 STEP_METRICS = 50
@@ -24,15 +24,12 @@ LEARNING_RATE = 1e-4
 STEPS_SAVER = 100
 MODEL_TO_USE = "unet_keras"
 
-#Nuria
-TRAININGDIR = "C:/Users/nuria/Desktop/FinalProject/BrainTumour/Generated_TFRecords"
-LOGDIR = "C:/Users/nuria/Desktop/FinalProject/SavingWeights"
+
+TRAININGDIR = "C:/Users/Eduard/Desktop/BrainTumorImages/Generated/"
+LOGDIR = "C:/Users/Eduard/Desktop/BrainTumorImages/Generated/logs/"
 #David
 #TRAININGDIR = "../BrainTumourImages/Generated/"
 #LOGDIR = '/tmp/aidl'
-#Aitor
-#TRAININGDIR = "/Volumes/Macintosh_SSD_Samsung_EVO_256_GB/BrainTumourImages/Generated"
-#LOGDIR = "/Users/aitorjara/tmp/aidl"
 
 
 #########################################################
@@ -48,6 +45,58 @@ def count_records(path):
         for record in tf.io.tf_record_iterator(TFRecord_path):
             num += 1
     return num
+
+
+def dice_coeff(y_true, y_pred):
+    smooth = 1.
+    y_true_f = K.flatten(y_true)
+    y_pred_f = K.flatten(y_pred)
+    intersection = K.sum(y_true_f * y_pred_f)
+    score = (2. * intersection + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) + smooth)
+    return score
+
+def dice_loss(y_true, y_pred):
+    loss = 1 - dice_coeff(y_true, y_pred)
+    return loss
+
+def dice_coef_multilabel(y_true, y_pred, numLabels=5):
+    dice=0
+    for index in range(numLabels):
+        dice -= dice_coeff(y_true[:,index,:,:,:], y_pred[:,index,:,:,:])
+    return dice
+
+def loss_rara1(labels, logits):
+    #https://github.com/perslev/MultiPlanarUNet/
+    # Flatten
+    labels = tf.cast(tf.reshape(labels, [-1]), tf.int32)
+    logits = tf.reshape(logits, [-1, 4])
+
+    # Calculate in-batch class counts and total counts
+    target_one_hot = tf.one_hot(labels, 4)
+    counts = tf.cast(tf.reduce_sum(target_one_hot, axis=0), tf.float32)
+    total_counts = tf.reduce_sum(counts)
+
+    # Compute balanced sample weights
+    weights = (tf.ones_like(counts) * total_counts) / (counts * 4)
+
+    # Compute sample weights from class weights
+    weights = tf.gather(weights, labels)
+
+    return tf.losses.sparse_softmax_cross_entropy(labels, logits, weights)
+
+def loss_rara2(labels, logits):
+    #https://github.com/tensorflow/tensorflow/issues/10021
+    #https://stackoverflow.com/questions/40198364/how-can-i-implement-a-weighted-cross-entropy-loss-in-tensorflow-using-sparse-sof/46984951#46984951
+    class_weights = tf.constant([0.1 , 0.3 , 0.3 , 0.3])  # 3 classes
+    sample_weights = tf.gather(class_weights, labels)
+    return tf.losses.sparse_softmax_cross_entropy(labels=labels, logits=logits,weights=sample_weights)
+
+def loss_sparse(labels, logits):
+    #labels = backend.print_tensor(labels, message='labels = ')
+    #logits = backend.print_tensor(logits, message='logits = ')
+    return tf.losses.sparse_softmax_cross_entropy(labels=labels, logits=logits)
+    #return tf.nn.sparse_softmax_cross_entropy_with_logits(labels=labels, logits=logits)
+    #return tf.nn.softmax_cross_entropy_with_logits_v2(logits=logits, labels=labels)
 
 
 
@@ -100,36 +149,35 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
     train_op = optimizer.minimize(loss,global_step=global_step)
 
     # Weight saver
-    model_checkpoint_path = os.path.join(logdir, 'Checkpoint')
+    # model_checkpoint_path = os.path.join(logdir, 'Checkpoint/')
     saver = tf.train.Saver()
 
     ######################################## RUN SESSION #########################################################
     summary_op=tf.summary.merge_all()
 
     with tf.Session() as sess:
-
+        
         # Initialize Variables
-        sess.run(tf.global_variables_initializer())
-        sess.run(tf.local_variables_initializer())
-
+        if restore_weights:
+            saver.restore(sess, tf.train.latest_checkpoint(logdir))
+        else:
+            sess.run(tf.global_variables_initializer())   
+            sess.run(tf.local_variables_initializer())
+      
         # op to write logs to Tensorboard
         logdir = os.path.expanduser(args.logdir)
         utils.ensure_dir(logdir)
         writer = tf.summary.FileWriter(logdir, graph=tf.get_default_graph())
 
-        if restore_weights:
-            saver.restore(sess, restore_weights)
-        else:
-            sess.run(tf.global_variables_initializer())
-
         #training, validation and saving
         for epoch in range(num_epochs):
-            for step in range(int(train_images/size_batch_train)):
+            # for step in range(int(train_images/size_batch_train)):
+            for step in range(3):
 
                 #training
                 batch_images, batch_labels = sess.run(batch_train)
                 _,cost = sess.run([train_op,loss], feed_dict={x:batch_images, y:batch_labels})
-                print('\nEpoch {}, batch {} -- Loss: {:.3f}'.format(epoch+1, step+1, cost))
+                print('/nEpoch {}, batch {} -- Loss: {:.3f}'.format(epoch+1, step+1, cost))
 
                 if step % step_metrics == 0:
                     summary_val,step_gl,logits_val = sess.run([summary_op,global_step,logits], feed_dict={x:batch_images, y:batch_labels})
@@ -139,25 +187,31 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
                 #validation
                 cost_validation = []
                 IoU_validation = []
-                if step % step_valid == 0:
-                    for batch in range(int(valid_images/size_batch_valid)):
-                        batch_images_valid, batch_labels_valid = sess.run(batch_valid)
-                        cost_valid = sess.run(loss, feed_dict={x:batch_images_valid, y:batch_labels_valid})
-                        cost_validation.append(cost_valid)
-                        IoU = sess.run(IoU_metrics, feed_dict={x:batch_images_valid, y:batch_labels_valid})
-                        IoU_validation.append(IoU)
-                    print('\nEpoch {} -- Validation Loss: {:.3f} and IoU Metrics: {:.3f}'.format(epoch+1, np.mean(cost_validation), np.mean(IoU_validation)))
+                
+                
+                # if step % step_valid == 0:
+                    # for batch in range(int(valid_images/size_batch_valid)):
+                        # batch_images_valid, batch_labels_valid = sess.run(batch_valid)
+                        # cost_valid = sess.run(loss, feed_dict={x:batch_images_valid, y:batch_labels_valid})
+                        # cost_validation.append(cost_valid)
+                        # IoU = sess.run(IoU_metrics, feed_dict={x:batch_images_valid, y:batch_labels_valid})
+                        # IoU_validation.append(IoU)
+                    # print('/nEpoch {} -- Validation Loss: {:.3f} and IoU Metrics: {:.3f}'.format(epoch+1, np.mean(cost_validation), np.mean(IoU_validation)))
 
 
 
                 #saving
                 if step % steps_saver == 0:
-                    print('Step {}\tSaving weights to {}'.format(step+1, model_checkpoint_path))
-                    saver.save(sess, save_path=model_checkpoint_path,global_step=global_step)
+                    print('Step {}/tSaving weights to {}'.format(step+1, logdir))
+                    saver.save(sess, save_path=logdir,global_step=global_step)
 
     #Predictions
         try:
+            tf.summary.image("output", logits[:,:,:,1:])
+            saver.restore(sess, tf.train.latest_checkpoint(logdir))
+            print ((np.array(batch_test)).shape)
             x_test_batch = sess.run(batch_test)
+            print ((np.array(x_test_batch)).shape)
             sess.run(logits,feed_dict={x:x_test_batch})
             print(logits)
 
