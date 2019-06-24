@@ -149,7 +149,7 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
     train_op = optimizer.minimize(loss,global_step=global_step)
 
     # Weight saver
-    # model_checkpoint_path = os.path.join(logdir, 'Checkpoint')
+    # model_checkpoint_path = os.path.join(logdir, 'Checkpoint/')
     saver = tf.train.Saver()
 
     ######################################## RUN SESSION #########################################################
@@ -167,7 +167,7 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
         writer = tf.summary.FileWriter(logdir, graph=tf.get_default_graph())
 
         if restore_weights:
-            saver.restore(sess, model_checkpoint_path)
+            saver.restore(sess, tf.train.latest_checkpoint(logdir))
         else:
             sess.run(tf.global_variables_initializer())
 
@@ -204,13 +204,13 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
 
                 #saving
                 if step % steps_saver == 0:
-                    print('Step {}/tSaving weights to {}'.format(step+1, model_checkpoint_path))
-                    saver.save(sess, save_path=model_checkpoint_path,global_step=global_step)
+                    print('Step {}/tSaving weights to {}'.format(step+1, logdir))
+                    saver.save(sess, save_path=logdir,global_step=global_step)
 
     #Predictions
         try:
             tf.summary.image("output", logits[:,:,:,1:])
-            saver.restore(sess, model_checkpoint_path)
+            saver.restore(sess, tf.train.latest_checkpoint(logdir))
             x_test_batch = sess.run(batch_test)
             sess.run(logits,feed_dict={x:x_test_batch})
             print(logits)
