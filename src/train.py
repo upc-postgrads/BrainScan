@@ -50,58 +50,6 @@ def count_records(path):
     return num
 
 
-def dice_coeff(y_true, y_pred):
-    smooth = 1.
-    y_true_f = K.flatten(y_true)
-    y_pred_f = K.flatten(y_pred)
-    intersection = K.sum(y_true_f * y_pred_f)
-    score = (2. * intersection + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) + smooth)
-    return score
-
-def dice_loss(y_true, y_pred):
-    loss = 1 - dice_coeff(y_true, y_pred)
-    return loss
-
-def dice_coef_multilabel(y_true, y_pred, numLabels=5):
-    dice=0
-    for index in range(numLabels):
-        dice -= dice_coeff(y_true[:,index,:,:,:], y_pred[:,index,:,:,:])
-    return dice
-
-def loss_rara1(labels, logits):
-    #https://github.com/perslev/MultiPlanarUNet/
-    # Flatten
-    labels = tf.cast(tf.reshape(labels, [-1]), tf.int32)
-    logits = tf.reshape(logits, [-1, 4])
-
-    # Calculate in-batch class counts and total counts
-    target_one_hot = tf.one_hot(labels, 4)
-    counts = tf.cast(tf.reduce_sum(target_one_hot, axis=0), tf.float32)
-    total_counts = tf.reduce_sum(counts)
-
-    # Compute balanced sample weights
-    weights = (tf.ones_like(counts) * total_counts) / (counts * 4)
-
-    # Compute sample weights from class weights
-    weights = tf.gather(weights, labels)
-
-    return tf.losses.sparse_softmax_cross_entropy(labels, logits, weights)
-
-def loss_rara2(labels, logits):
-    #https://github.com/tensorflow/tensorflow/issues/10021
-    #https://stackoverflow.com/questions/40198364/how-can-i-implement-a-weighted-cross-entropy-loss-in-tensorflow-using-sparse-sof/46984951#46984951
-    class_weights = tf.constant([0.1 , 0.3 , 0.3 , 0.3])  # 3 classes
-    sample_weights = tf.gather(class_weights, labels)
-    return tf.losses.sparse_softmax_cross_entropy(labels=labels, logits=logits,weights=sample_weights)
-
-def loss_sparse(labels, logits):
-    #labels = backend.print_tensor(labels, message='labels = ')
-    #logits = backend.print_tensor(logits, message='logits = ')
-    return tf.losses.sparse_softmax_cross_entropy(labels=labels, logits=logits)
-    #return tf.nn.sparse_softmax_cross_entropy_with_logits(labels=labels, logits=logits)
-    #return tf.nn.softmax_cross_entropy_with_logits_v2(logits=logits, labels=labels)
-
-
 
 
 
