@@ -47,36 +47,6 @@ def count_records(path):
     return num
 
 
-def dice_coeff(y_true, y_pred):
-    smooth = 1.
-    y_true_f = K.flatten(y_true)
-    y_pred_f = K.flatten(y_pred)
-    intersection = K.sum(y_true_f * y_pred_f)
-    score = (2. * intersection + smooth) / (K.sum(y_true_f) + K.sum(y_pred_f) + smooth)
-    return score
-
-def dice_loss(y_true, y_pred):
-    loss = 1 - dice_coeff(y_true, y_pred)
-    return loss
-
-def dice_coef_multilabel(y_true, y_pred, numLabels=5):
-    dice=0
-    for index in range(numLabels):
-        dice -= dice_coeff(y_true[:,index,:,:,:], y_pred[:,index,:,:,:])
-    return dice
-
-def loss_sparse(labels, logits):
-    #labels = backend.print_tensor(labels, message='labels = ')
-    #logits = backend.print_tensor(logits, message='logits = ')
-    return tf.losses.sparse_softmax_cross_entropy(labels=labels, logits=logits)
-    #return tf.nn.sparse_softmax_cross_entropy_with_logits(labels=labels, logits=logits)
-    #return tf.nn.softmax_cross_entropy_with_logits_v2(logits=logits, labels=labels)
-
-
-
-
-
-
 def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size_batch_valid, step_valid, step_metrics, steps_saver, learning_rate, logdir, restore_weights):
 
     #param step_valid: after how many batches of training images we perform the validation
