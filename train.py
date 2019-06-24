@@ -156,20 +156,20 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
     summary_op=tf.summary.merge_all()
 
     with tf.Session() as sess:
-
+        
         # Initialize Variables
-        sess.run(tf.global_variables_initializer())
-        sess.run(tf.local_variables_initializer())
+        if restore_weights:
+            saver.restore(sess, tf.train.latest_checkpoint(logdir))
+        else:
+            sess.run(tf.global_variables_initializer())   
+            sess.run(tf.local_variables_initializer())
+      
+
 
         # op to write logs to Tensorboard
         logdir = os.path.expanduser(args.logdir)
         utils.ensure_dir(logdir)
         writer = tf.summary.FileWriter(logdir, graph=tf.get_default_graph())
-
-        if restore_weights:
-            saver.restore(sess, tf.train.latest_checkpoint(logdir))
-        else:
-            sess.run(tf.global_variables_initializer())
 
         #training, validation and saving
         for epoch in range(num_epochs):
@@ -211,7 +211,9 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
         try:
             tf.summary.image("output", logits[:,:,:,1:])
             saver.restore(sess, tf.train.latest_checkpoint(logdir))
+            print ((np.array(batch_test)).shape)
             x_test_batch = sess.run(batch_test)
+            print ((np.array(x_test_batch)).shape)
             sess.run(logits,feed_dict={x:x_test_batch})
             print(logits)
 
