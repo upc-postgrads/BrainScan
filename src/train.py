@@ -65,32 +65,6 @@ def dice_coef_multilabel(y_true, y_pred, numLabels=5):
         dice -= dice_coeff(y_true[:,index,:,:,:], y_pred[:,index,:,:,:])
     return dice
 
-def loss_rara1(labels, logits):
-    #https://github.com/perslev/MultiPlanarUNet/
-    # Flatten
-    labels = tf.cast(tf.reshape(labels, [-1]), tf.int32)
-    logits = tf.reshape(logits, [-1, 4])
-
-    # Calculate in-batch class counts and total counts
-    target_one_hot = tf.one_hot(labels, 4)
-    counts = tf.cast(tf.reduce_sum(target_one_hot, axis=0), tf.float32)
-    total_counts = tf.reduce_sum(counts)
-
-    # Compute balanced sample weights
-    weights = (tf.ones_like(counts) * total_counts) / (counts * 4)
-
-    # Compute sample weights from class weights
-    weights = tf.gather(weights, labels)
-
-    return tf.losses.sparse_softmax_cross_entropy(labels, logits, weights)
-
-def loss_rara2(labels, logits):
-    #https://github.com/tensorflow/tensorflow/issues/10021
-    #https://stackoverflow.com/questions/40198364/how-can-i-implement-a-weighted-cross-entropy-loss-in-tensorflow-using-sparse-sof/46984951#46984951
-    class_weights = tf.constant([0.1 , 0.3 , 0.3 , 0.3])  # 3 classes
-    sample_weights = tf.gather(class_weights, labels)
-    return tf.losses.sparse_softmax_cross_entropy(labels=labels, logits=logits,weights=sample_weights)
-
 def loss_sparse(labels, logits):
     #labels = backend.print_tensor(labels, message='labels = ')
     #logits = backend.print_tensor(logits, message='logits = ')
