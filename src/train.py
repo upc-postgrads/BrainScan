@@ -24,12 +24,15 @@ LEARNING_RATE = 1e-4
 STEPS_SAVER = 100
 MODEL_TO_USE = "unet_keras"
 
-
-TRAININGDIR = "C:/Users/Eduard/Desktop/BrainTumorImages/Generated/"
-LOGDIR = "C:/Users/Eduard/Desktop/BrainTumorImages/Generated/logs/"
+#Eduard
+#TRAININGDIR = "C:/Users/Eduard/Desktop/BrainTumorImages/Generated/"
+#LOGDIR = "C:/Users/Eduard/Desktop/BrainTumorImages/Generated/logs/"
 #David
 #TRAININGDIR = "../BrainTumourImages/Generated/"
 #LOGDIR = '/tmp/aidl'
+#Nuria
+TRAININGDIR = "C:/Users/nuria/Desktop/FinalProject/BrainTumour/Generated_TFRecords"
+LOGDIR = "C:/Users/nuria/Desktop/FinalProject/SavingWeights"
 
 
 #########################################################
@@ -100,14 +103,14 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
     summary_op=tf.summary.merge_all()
 
     with tf.Session() as sess:
-        
+
         # Initialize Variables
         if restore_weights:
             saver.restore(sess, tf.train.latest_checkpoint(logdir))
         else:
-            sess.run(tf.global_variables_initializer())   
+            sess.run(tf.global_variables_initializer())
             sess.run(tf.local_variables_initializer())
-      
+
         # op to write logs to Tensorboard
         logdir = os.path.expanduser(args.logdir)
         utils.ensure_dir(logdir)
@@ -115,38 +118,41 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
 
         #training, validation and saving
         for epoch in range(num_epochs):
-            # for step in range(int(train_images/size_batch_train)):
-            for step in range(3):
+             for step in range(int(train_images/size_batch_train)):
 
                 #training
-                batch_images, batch_labels = sess.run(batch_train)
-                _,cost = sess.run([train_op,loss], feed_dict={x:batch_images, y:batch_labels})
-                print('/nEpoch {}, batch {} -- Loss: {:.3f}'.format(epoch+1, step+1, cost))
+                #batch_images, batch_labels = sess.run(batch_train)
+                #_,cost = sess.run([train_op,loss], feed_dict={x:batch_images, y:batch_labels})
+                #print('/nEpoch {}, batch {} -- Loss: {:.3f}'.format(epoch+1, step+1, cost))
 
-                if step % step_metrics == 0:
-                    summary_val,step_gl,logits_val = sess.run([summary_op,global_step,logits], feed_dict={x:batch_images, y:batch_labels})
-                    writer.add_summary(summary_val,step_gl)
+                #if step % step_metrics == 0:
+                    #summary_val,step_gl,logits_val = sess.run([summary_op,global_step,logits], feed_dict={x:batch_images, y:batch_labels})
+                    #writer.add_summary(summary_val,step_gl)
 
 
                 #validation
                 cost_validation = []
                 IoU_validation = []
-                
-                
-                # if step % step_valid == 0:
-                    # for batch in range(int(valid_images/size_batch_valid)):
-                        # batch_images_valid, batch_labels_valid = sess.run(batch_valid)
-                        # cost_valid = sess.run(loss, feed_dict={x:batch_images_valid, y:batch_labels_valid})
-                        # cost_validation.append(cost_valid)
-                        # IoU = sess.run(IoU_metrics, feed_dict={x:batch_images_valid, y:batch_labels_valid})
-                        # IoU_validation.append(IoU)
-                    # print('/nEpoch {} -- Validation Loss: {:.3f} and IoU Metrics: {:.3f}'.format(epoch+1, np.mean(cost_validation), np.mean(IoU_validation)))
+
+
+                if step % step_valid == 0 and step != 0:
+                     for batch in range(int(valid_images/size_batch_valid)):
+                         batch_images_valid, batch_labels_valid = sess.run(batch_valid)
+                         cost_valid = sess.run(loss, feed_dict={x:batch_images_valid, y:batch_labels_valid})
+                         cost_validation.append(cost_valid)
+
+                         logits_aux = sess.run(logits, feed_dict={x:batch_images_valid})
+                         IoU = sess.run(IoU_metrics, feed_dict={x:logits_aux, y:batch_labels_valid})
+                         print('/nAixo {}'.format(IoU))
+                         IoU_validation.append(IoU)
+                         #print('/nEpoch {} -- Validation Loss: {:.3f}'.format(epoch+1, cost_valid))
+                     #print('/nEpoch {} -- Validation Loss: {:.3f} and IoU Metrics: {:.3f}'.format(epoch+1, np.mean(cost_validation), np.mean(IoU_validation)))
 
 
 
                 #saving
                 if step % steps_saver == 0:
-                    print('Step {}/tSaving weights to {}'.format(step+1, logdir))
+                    print('Step {}: Saving weights to {}'.format(step+1, logdir))
                     saver.save(sess, save_path=logdir,global_step=global_step)
 
     #Predictions
