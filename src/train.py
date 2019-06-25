@@ -15,7 +15,7 @@ from utils import utils
 
 #Training parameters
 NUM_EPOCHS = 1
-BATCH_SIZE_TRAIN = 2
+BATCH_SIZE_TRAIN = 25
 BATCH_SIZE_TEST = 2
 BATCH_SIZE_VALID = 25
 STEP_VALID = 50
@@ -23,16 +23,13 @@ STEP_METRICS = 50
 LEARNING_RATE = 1e-4
 STEPS_SAVER = 100
 MODEL_TO_USE = "unet_keras"
+RESTORE_WEIGHTS=False
 
-#Eduard
 #TRAININGDIR = "C:/Users/Eduard/Desktop/BrainTumorImages/Generated/"
 #LOGDIR = "C:/Users/Eduard/Desktop/BrainTumorImages/Generated/logs/"
 #David
-#TRAININGDIR = "../BrainTumourImages/Generated/"
-#LOGDIR = '/tmp/aidl'
-#Nuria
-TRAININGDIR = "C:/Users/nuria/Desktop/FinalProject/BrainTumour/Generated_TFRecords"
-LOGDIR = "C:/Users/nuria/Desktop/FinalProject/SavingWeights"
+TRAININGDIR = "/home/deivit/Desktop/dades/Documents/david/upc/AIDL/projecte/unet/BrainTumourImages/Generated_50-50"
+LOGDIR = '/tmp/aidl/current'
 
 
 #########################################################
@@ -63,98 +60,141 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
     ######################################## DATAFLOW GRAPH #########################################################
 
     train_list, valid_list, test_list = get_file_lists(trainingdir)
-    batch_train = input_fn(filenames=train_list,mode="training", num_epochs=num_epochs, batch_size=size_batch_train)
-    batch_valid = input_fn(filenames=valid_list, mode='validation', num_epochs=num_epochs, batch_size=size_batch_valid)
-    batch_test = input_fn(filenames=test_list, mode='testing', num_epochs=num_epochs, batch_size=size_batch_test)
-
-    # Graph inputs
-    x = tf.placeholder('float', shape=[None, 192, 192, 4], name='x')
-    y = tf.placeholder('int32', shape=[None, 192, 192, 4], name='y')
-    #y = tf.one_hot(indices=tf.squeeze(y), depth=4)
-
-
-    tf.summary.image("input_0",tf.expand_dims(x[:,:,:,0],axis=-1))
-    tf.summary.image("labels",tf.cast(y,tf.float32))
-    #y=tf.squeeze(y)
-
+    
+    train_dataset = create_dataset(filenames=train_list,mode="training", num_epochs=num_epochs, batch_size=size_batch_train)
+    train_iterator = train_dataset.make_initializable_iterator()
+    validation_dataset = create_dataset(filenames=valid_list,mode="validation", num_epochs=1, batch_size=size_batch_valid)
+    validation_iterator = validation_dataset.make_initializable_iterator() 
+    test_dataset = create_dataset(filenames=test_list,mode="testing", num_epochs=1, batch_size=size_batch_test)      
+    test_iterator = test_dataset.make_initializable_iterator() 
+    
+    # Feedable iterator assigns each iterator a unique string handle it is going to work on 
+    handle = tf.placeholder(tf.string, shape = [])
+    iterator = tf.data.Iterator.from_string_handle(handle, train_dataset.output_types, train_dataset.output_shapes)
+    x, y = iterator.get_next()
 
     if model == "unet_keras":
         from models import unet_keras as model
+        x.set_shape([None, 192, 192, 4])
+        x = tf.cast(x, tf.float32)        
         logits = model.unet(x,True)
     elif model == "unet_tensorflow":
         from models import unet_tensorflow as model
         logits = model.unet(x, training=True, norm_option=True)
-
-    tf.summary.image("prediction", logits[:,:,:,1:])
-    tf.summary.histogram("logits",logits)
+    
     #Forward and backprop pass
-    loss= tf.reduce_mean(tf.losses.softmax_cross_entropy(onehot_labels=y, logits=logits))
-    tf.summary.scalar("loss", loss)
+    y.set_shape([None, 192, 192, 4])
+    y = tf.cast(y, tf.int32)
+    
+    loss = tf.reduce_mean(tf.losses.softmax_cross_entropy(onehot_labels=y, logits=logits))
     IoU_metrics = tf.metrics.mean_iou(labels=y, predictions=logits, num_classes=4)
+    loss_op = tf.losses.get_total_loss()
 
     optimizer = tf.train.AdamOptimizer(learning_rate)
-    train_op = optimizer.minimize(loss,global_step=global_step)
-
+    train_op = optimizer.minimize(loss_op,global_step=global_step)
+   
     # Weight saver
-    # model_checkpoint_path = os.path.join(logdir, 'Checkpoint/')
+    model_checkpoint_path = os.path.join(logdir, 'Checkpoint')
     saver = tf.train.Saver()
+    
+    
+    ######################################## SUMMARIES #########################################################    
 
-    ######################################## RUN SESSION #########################################################
+    tf.summary.image('input_0',tf.expand_dims(x[:,:,:,0],axis=-1))
+    #tf.summary.image("labels",tf.cast(y,tf.float32)) 
+    tf.summary.image('labels_0',tf.expand_dims(tf.cast(y,tf.float32)[:,:,:,0],axis=-1))
+    tf.summary.image('labels_1',tf.expand_dims(tf.cast(y,tf.float32)[:,:,:,1],axis=-1))
+    tf.summary.image('labels_2',tf.expand_dims(tf.cast(y,tf.float32)[:,:,:,2],axis=-1)) 
+    tf.summary.image('labels_3',tf.expand_dims(tf.cast(y,tf.float32)[:,:,:,3],axis=-1))     
+    tf.summary.image('prediction_0',tf.expand_dims(logits[:,:,:,0],axis=-1))
+    tf.summary.image('prediction_1',tf.expand_dims(logits[:,:,:,1],axis=-1))
+    tf.summary.image('prediction_2',tf.expand_dims(logits[:,:,:,2],axis=-1)) 
+    tf.summary.image('prediction_3',tf.expand_dims(logits[:,:,:,3],axis=-1))     
+    tf.summary.scalar("loss", loss_op)    
+    tf.summary.histogram("logits",logits)  
     summary_op=tf.summary.merge_all()
 
-    with tf.Session() as sess:
+       
+    ######################################## RUN SESSION #########################################################
+    
 
+
+    with tf.Session() as sess:
+        
         # Initialize Variables
         if restore_weights:
             saver.restore(sess, tf.train.latest_checkpoint(logdir))
         else:
-            sess.run(tf.global_variables_initializer())
+            sess.run(tf.global_variables_initializer())   
             sess.run(tf.local_variables_initializer())
-
+      
         # op to write logs to Tensorboard
         logdir = os.path.expanduser(args.logdir)
         utils.ensure_dir(logdir)
         writer = tf.summary.FileWriter(logdir, graph=tf.get_default_graph())
 
+
+        train_handle = sess.run(train_iterator.string_handle())
+        validation_handle = sess.run(validation_iterator.string_handle())
+        test_handle = sess.run(test_iterator.string_handle())          
+
         #training, validation and saving
         for epoch in range(num_epochs):
-             for step in range(int(train_images/size_batch_train)):
+            step=0
+            while True:
+                try:
+                    sess.run(train_iterator.initializer)
+                    _,cost,summary_val,step_gl,logits_val = sess.run([train_op,loss_op,summary_op,global_step,logits], feed_dict={handle: train_handle})
+                    #feed_dict = {handle: train_val_string_handle}
+                    #_,cost = sess.run([train_op,loss_op], feed_dict=feed_dict)
+                    writer.add_summary(summary_val,step_gl)
+                    step=step+1
+                    print('\nEpoch {}, batch {} -- Loss: {:.3f}'.format(epoch+1, step, cost))
+                    
+                    #if step % step_metrics == 0:
+                    #    summary_val,step_gl,logits_val = sess.run([summary_op,global_step,logits],feed_dict)
+                    #    writer.add_summary(summary_val,step_gl)
+                        
+                    if step % STEPS_SAVER == 0:
+                        print('Step {}\tSaving weights to {}'.format(step+1, model_checkpoint_path))
+                        saver.save(sess, save_path=model_checkpoint_path,global_step=global_step)                             
+                                
+                except tf.errors.OutOfRangeError:
+                    pass
+            """comentat
+            for step in range(num_epochs):
 
                 #training
-                #batch_images, batch_labels = sess.run(batch_train)
-                #_,cost = sess.run([train_op,loss], feed_dict={x:batch_images, y:batch_labels})
-                #print('/nEpoch {}, batch {} -- Loss: {:.3f}'.format(epoch+1, step+1, cost))
+                batch_images, batch_labels = sess.run(batch_train)
+                _,cost = sess.run([train_op,loss], feed_dict={x:batch_images, y:batch_labels})
+                print('/nEpoch {}, batch {} -- Loss: {:.3f}'.format(epoch+1, step+1, cost))
 
-                #if step % step_metrics == 0:
-                    #summary_val,step_gl,logits_val = sess.run([summary_op,global_step,logits], feed_dict={x:batch_images, y:batch_labels})
-                    #writer.add_summary(summary_val,step_gl)
+                if step % step_metrics == 0:
+                    summary_val,step_gl,logits_val = sess.run([summary_op,global_step,logits], feed_dict={x:batch_images, y:batch_labels})
+                    writer.add_summary(summary_val,step_gl)
 
 
                 #validation
                 cost_validation = []
                 IoU_validation = []
+                
+                
+                # if step % step_valid == 0:
+                    # for batch in range(int(valid_images/size_batch_valid)):
+                        # batch_images_valid, batch_labels_valid = sess.run(batch_valid)
+                        # cost_valid = sess.run(loss, feed_dict={x:batch_images_valid, y:batch_labels_valid})
+                        # cost_validation.append(cost_valid)
+                        # IoU = sess.run(IoU_metrics, feed_dict={x:batch_images_valid, y:batch_labels_valid})
+                        # IoU_validation.append(IoU)
+                    # print('/nEpoch {} -- Validation Loss: {:.3f} and IoU Metrics: {:.3f}'.format(epoch+1, np.mean(cost_validation), np.mean(IoU_validation)))
 
-
-                if step % step_valid == 0 and step != 0:
-                     for batch in range(int(valid_images/size_batch_valid)):
-                         batch_images_valid, batch_labels_valid = sess.run(batch_valid)
-                         cost_valid = sess.run(loss, feed_dict={x:batch_images_valid, y:batch_labels_valid})
-                         cost_validation.append(cost_valid)
-
-                         logits_aux = sess.run(logits, feed_dict={x:batch_images_valid})
-                         IoU = sess.run(IoU_metrics, feed_dict={x:logits_aux, y:batch_labels_valid})
-                         print('/nAixo {}'.format(IoU))
-                         IoU_validation.append(IoU)
-                         #print('/nEpoch {} -- Validation Loss: {:.3f}'.format(epoch+1, cost_valid))
-                     #print('/nEpoch {} -- Validation Loss: {:.3f} and IoU Metrics: {:.3f}'.format(epoch+1, np.mean(cost_validation), np.mean(IoU_validation)))
-
-
-
+               
                 #saving
                 if step % steps_saver == 0:
-                    print('Step {}: Saving weights to {}'.format(step+1, logdir))
+                    print('Step {}/tSaving weights to {}'.format(step+1, logdir))
                     saver.save(sess, save_path=logdir,global_step=global_step)
-
+            """
+    """
     #Predictions
         try:
             tf.summary.image("output", logits[:,:,:,1:])
@@ -167,6 +207,7 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
 
         except tf.errors.OutOfRangeError:
             print("u fucked up")
+    """        
 
 
 
@@ -183,10 +224,10 @@ if __name__ == '__main__':
     parser.add_argument('-sm', '--step_metrics', type=int, default=STEP_METRICS, help='frequency of summary within training batches')
     parser.add_argument('-ss', '--steps_saver', type=int, default=STEPS_SAVER, help='frequency of weight saving within training batches')
     parser.add_argument('-lr', '--learning_rate', type=float, default=LEARNING_RATE, help='Learning rate')
-    parser.add_argument('-r', '--restore', help='Path to model checkpoint to restore weights from.')
+    parser.add_argument('-r', '--restore_weights', type=float, default=RESTORE_WEIGHTS, help='Restore weights from logdir path.')
     parser.add_argument('-m', '--model', default=MODEL_TO_USE,help='Model to use, either unet_keras or unet_tensorflow.')
 
     args = parser.parse_args()
 
 
-main(args.trainingdir,args.model, args.num_epochs, args.size_batch_train, args.size_batch_test, args.size_batch_valid, args.step_valid, args.step_metrics, args.steps_saver, args.learning_rate, args.logdir, args.restore)
+main(args.trainingdir,args.model, args.num_epochs, args.size_batch_train, args.size_batch_test, args.size_batch_valid, args.step_valid, args.step_metrics, args.steps_saver, args.learning_rate, args.logdir, args.restore_weights)

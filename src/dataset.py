@@ -18,7 +18,7 @@ def get_file_lists(data_dir):
 
 
 
-def input_fn(filenames, mode, num_epochs=1, batch_size=1):
+def create_dataset(filenames, mode, num_epochs=1, batch_size=1,perform_shuffle=False):
     if mode == 'validation':
         perform_shuffle = False
     if mode == 'training':
@@ -52,12 +52,14 @@ def input_fn(filenames, mode, num_epochs=1, batch_size=1):
 
         frames = tf.reshape(frames,(height, width, depth))
         label = tf.reshape(label,(height, width,-1))
-        tf.expand_dims(label, 1).shape
-
+        #tf.expand_dims(label, 1).shape
+        
         #Add data augmentation here
         frames=tf.image.central_crop(frames,0.8)
         label=tf.image.central_crop(label,0.8)
-
+        
+        label=tf.one_hot(indices=tf.squeeze(label), depth=4)
+        
         return frames, label
 
 
@@ -71,17 +73,21 @@ def input_fn(filenames, mode, num_epochs=1, batch_size=1):
     if perform_shuffle:
         # Randomizes input using a window of 256 elements (read into memory)
         dataset = dataset.shuffle(buffer_size=256)
-
+    #dataset = dataset.shuffle(buffer_size=256)
 
     # Repeats dataset this # times
     dataset = dataset.repeat(num_epochs)
+
 
     # Batch size to use
     dataset = dataset.batch(batch_size)
 
 
-    iterator = dataset.make_one_shot_iterator()
-    batch_features, batch_labels = iterator.get_next()
-    batch_labels = tf.one_hot(indices=tf.squeeze(batch_labels), depth=4)
+    return dataset
     
-    return batch_features, batch_labels
+    
+    #iterator = dataset.make_one_shot_iterator()
+    #batch_features, batch_labels = iterator.get_next()
+    #batch_labels = tf.one_hot(indices=tf.squeeze(batch_labels), depth=4)
+    
+    #return batch_features, batch_labels
