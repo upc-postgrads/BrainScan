@@ -46,6 +46,5 @@ def unet(inputs, training=False):
     conv9 = tf.keras.layers.Conv2D(64, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(conv9)
     conv9 = tf.keras.layers.Conv2D(2, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(conv9)
 
-    #conv10 = tf.keras.layers.Conv2D(4, 1, activation = 'softmax')(conv9)
     conv10 = tf.keras.layers.Conv2D(4, 1)(conv9)
     return conv10
