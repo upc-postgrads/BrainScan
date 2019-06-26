@@ -97,14 +97,19 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
         tf.summary.image("labels",tf.cast(y,tf.float32)) 
         tf.summary.image("prediction", logits[:,:,:,1:])         
         
-    tf.summary.scalar("loss", loss_op)    
     #tf.summary.histogram("logits",logits)  
-    summary_op=tf.summary.merge_all()
-
-       
-    ######################################## RUN SESSION #########################################################
     
+    tf.summary.scalar("loss", loss_op)  
+    
+    summary_op=tf.summary.merge_all()
+    
+    # op to write logs to Tensorboard
+    logdir = os.path.expanduser(logdir)
+    utils.ensure_dir(logdir)
+    writer = tf.summary.FileWriter(logdir, graph=tf.get_default_graph())
 
+    
+    ######################################## RUN SESSION #########################################################
 
     with tf.Session() as sess:
         
@@ -115,12 +120,6 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
             sess.run(tf.global_variables_initializer())   
             sess.run(tf.local_variables_initializer())
       
-        # op to write logs to Tensorboard
-        logdir = os.path.expanduser(logdir)
-        utils.ensure_dir(logdir)
-        writer = tf.summary.FileWriter(logdir, graph=tf.get_default_graph())
-
-
         train_handle = sess.run(train_iterator.string_handle())
         validation_handle = sess.run(validation_iterator.string_handle())
         test_handle = sess.run(test_iterator.string_handle())          
@@ -129,8 +128,9 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
         for epoch in range(num_epochs):
             sess.run(train_iterator.initializer)
             step=0
-            while True:
-                try:
+            try:
+                while True:
+
                     #train
                     _,cost,summary_val,step_gl,logits_val = sess.run([train_op,loss_op,summary_op,global_step,logits], feed_dict={handle: train_handle})
                     
@@ -142,26 +142,29 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
                     
                     #validation
                     if step % step_metrics == 0:
-                        validation_loss = []
+                        total_validation_loss = []
                         sess.run(validation_iterator.initializer)
                         step_val=0
-                        while True:
-                            try:                        
-                                    _, cost_valid = sess.run([logits, loss_op], feed_dict={handle: validation_handle})
-                                    validation_loss.append(cost_valid)
-                                    step_val += 1
-                                    print('\nValidation step: Epoch {}, batch {} -- Loss: {:.3f}'.format(epoch+1, step_val, cost_valid))
-                            except tf.errors.OutOfRangeError:
-                                pass                                    
-                        print('Epoch {} and training batch {} -- Validation loss: {:.3f}'.format(epoch+1, step+1, np.mean(validation_loss)))
+                        try:    
+                            while True:
+                                _, cost_valid = sess.run([logits, loss_op], feed_dict={handle: validation_handle})
+                                total_validation_loss.append(cost_valid)
+                                step_val += 1
+                                #print('\nValidation step: Epoch {}, batch {} -- Loss: {:.3f}'.format(epoch+1, step_val, cost_valid))
+                        except tf.errors.OutOfRangeError:
+                            pass         
+                            total_validation_loss = np.mean(total_validation_loss)         
+                            validation_loss_summary = tf.Summary(value=[tf.Summary.Value(tag="validation_loss", simple_value=total_validation_loss)])
+                            writer.add_summary(validation_loss_summary,step_gl)                        
+                        print('Epoch {} and training batch {} -- Validation loss: {:.3f}'.format(epoch+1, step+1,total_validation_loss))
                     
                     #saving    
                     if step % STEPS_SAVER == 0:
                         print('Step {}\tSaving weights to {}'.format(step+1, model_checkpoint_path))
                         saver.save(sess, save_path=model_checkpoint_path,global_step=global_step)                             
                                 
-                except tf.errors.OutOfRangeError:
-                    pass
+            except tf.errors.OutOfRangeError:
+                pass
                 
         return
  

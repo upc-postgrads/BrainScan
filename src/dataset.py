@@ -59,8 +59,8 @@ def create_dataset(filenames, mode, num_epochs=1, batch_size=1,perform_shuffle=F
         frames=tf.image.central_crop(frames,0.8)
         label=tf.image.central_crop(label,0.8)
         
-        #if perform_one_hot:
-        #    label=tf.one_hot(indices=tf.squeeze(label), depth=4)
+        if perform_one_hot:
+            label=tf.one_hot(indices=tf.squeeze(label), depth=4)
         
         return frames, label
 
