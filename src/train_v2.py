@@ -151,6 +151,7 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_valid, siz
                         x_aux_valid, y_aux_valid = sess.run([x, y], feed_dict={handle: validation_handle})
                         _, cost_valid = sess.run([logits, loss_op], feed_dict={x:x_aux_valid, y:y_aux_valid})
                         validation_loss.append(cost_valid)
+                        writer.add_scalar("loss", cost_valid)
                     print('Epoch {} and training batch {} -- Validation loss: {:.3f}'.format(epoch+1, step+1, np.mean(validation_loss)))
 
                 #saving
