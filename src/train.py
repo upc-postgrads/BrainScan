@@ -14,22 +14,18 @@ from utils import utils
 #########################################################
 
 #Training parameters
-NUM_EPOCHS = 1
+NUM_EPOCHS = 5
 BATCH_SIZE_TRAIN = 25
 BATCH_SIZE_TEST = 2
 BATCH_SIZE_VALID = 25
 STEP_VALID = 50
 STEP_METRICS = 50
-LEARNING_RATE = 1e-4
+LEARNING_RATE = 1e-5
 STEPS_SAVER = 100
 MODEL_TO_USE = "unet_keras"
 RESTORE_WEIGHTS=False
-
-#TRAININGDIR = "C:/Users/Eduard/Desktop/BrainTumorImages/Generated/"
-#LOGDIR = "C:/Users/Eduard/Desktop/BrainTumorImages/Generated/logs/"
-#David
-TRAININGDIR = "/home/deivit/Desktop/dades/Documents/david/upc/AIDL/projecte/unet/BrainTumourImages/Generated_50-50"
-LOGDIR = '/tmp/aidl/current'
+TRAININGDIR = "/path_of_training_images"
+LOGDIR = '/tmp'
 
 
 #########################################################
@@ -129,7 +125,7 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
             sess.run(tf.local_variables_initializer())
       
         # op to write logs to Tensorboard
-        logdir = os.path.expanduser(args.logdir)
+        logdir = os.path.expanduser(logdir)
         utils.ensure_dir(logdir)
         writer = tf.summary.FileWriter(logdir, graph=tf.get_default_graph())
 
@@ -140,10 +136,10 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
 
         #training, validation and saving
         for epoch in range(num_epochs):
+            sess.run(train_iterator.initializer)
             step=0
             while True:
                 try:
-                    sess.run(train_iterator.initializer)
                     _,cost,summary_val,step_gl,logits_val = sess.run([train_op,loss_op,summary_op,global_step,logits], feed_dict={handle: train_handle})
                     #feed_dict = {handle: train_val_string_handle}
                     #_,cost = sess.run([train_op,loss_op], feed_dict=feed_dict)
@@ -161,56 +157,9 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
                                 
                 except tf.errors.OutOfRangeError:
                     pass
-            """comentat
-            for step in range(num_epochs):
-
-                #training
-                batch_images, batch_labels = sess.run(batch_train)
-                _,cost = sess.run([train_op,loss], feed_dict={x:batch_images, y:batch_labels})
-                print('/nEpoch {}, batch {} -- Loss: {:.3f}'.format(epoch+1, step+1, cost))
-
-                if step % step_metrics == 0:
-                    summary_val,step_gl,logits_val = sess.run([summary_op,global_step,logits], feed_dict={x:batch_images, y:batch_labels})
-                    writer.add_summary(summary_val,step_gl)
-
-
-                #validation
-                cost_validation = []
-                IoU_validation = []
                 
-                
-                # if step % step_valid == 0:
-                    # for batch in range(int(valid_images/size_batch_valid)):
-                        # batch_images_valid, batch_labels_valid = sess.run(batch_valid)
-                        # cost_valid = sess.run(loss, feed_dict={x:batch_images_valid, y:batch_labels_valid})
-                        # cost_validation.append(cost_valid)
-                        # IoU = sess.run(IoU_metrics, feed_dict={x:batch_images_valid, y:batch_labels_valid})
-                        # IoU_validation.append(IoU)
-                    # print('/nEpoch {} -- Validation Loss: {:.3f} and IoU Metrics: {:.3f}'.format(epoch+1, np.mean(cost_validation), np.mean(IoU_validation)))
-
-               
-                #saving
-                if step % steps_saver == 0:
-                    print('Step {}/tSaving weights to {}'.format(step+1, logdir))
-                    saver.save(sess, save_path=logdir,global_step=global_step)
-            """
-    """
-    #Predictions
-        try:
-            tf.summary.image("output", logits[:,:,:,1:])
-            saver.restore(sess, tf.train.latest_checkpoint(logdir))
-            print ((np.array(batch_test)).shape)
-            x_test_batch = sess.run(batch_test)
-            print ((np.array(x_test_batch)).shape)
-            sess.run(logits,feed_dict={x:x_test_batch})
-            print(logits)
-
-        except tf.errors.OutOfRangeError:
-            print("u fucked up")
-    """        
-
-
-
+        return
+ 
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Pipeline execution')
@@ -229,5 +178,3 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-
-main(args.trainingdir,args.model, args.num_epochs, args.size_batch_train, args.size_batch_test, args.size_batch_valid, args.step_valid, args.step_metrics, args.steps_saver, args.learning_rate, args.logdir, args.restore_weights)
