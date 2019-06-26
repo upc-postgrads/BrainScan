@@ -1,11 +1,11 @@
 #https://medium.com/ymedialabs-innovation/how-to-use-dataset-and-iterators-in-tensorflow-with-code-samples-3bb98b6b74ab
-import tensorflow as tf
+import tensorflow as tf 
 import glob
-#Data pipeline using TFRecords
+#Data pipelin using TFRecords
 
 def get_file_lists(data_dir):
 
-    #This function returns three lists (train_list, valid_list and test_list) containing the directories of all the files in the
+    #This function returns two lists (train_list and valid_list) containing the directories of all the files in the
     #specified path
     #Parameter: data_dir is the directory where the TFRecords are stored.
 
@@ -18,7 +18,7 @@ def get_file_lists(data_dir):
 
 
 
-def create_dataset(filenames, mode, num_epochs=1, batch_size=1,perform_shuffle=False):
+def input_fn(filenames, mode, num_epochs=1, batch_size=1):
     if mode == 'validation':
         perform_shuffle = False
     if mode == 'training':
@@ -50,49 +50,47 @@ def create_dataset(filenames, mode, num_epochs=1, batch_size=1,perform_shuffle=F
         width= tf.cast(sample['width'], tf.int32)
         depth= tf.cast(sample['depth'], tf.int32)
 
-        frames = tf.reshape(frames,(height, width, depth))
-        label = tf.reshape(label,(height, width,-1))
-        #tf.expand_dims(label, 1).shape
+        with tf.name_scope('preprocessing'):
+            frames = tf.reshape(frames,(height, width, depth))
+            label = tf.reshape(label,(height, width,-1))
+            tf.expand_dims(label, 1).shape
 
-        #Add data augmentation here
-<<<<<<< HEAD
-        frames=tf.image.central_crop(frames,0.8)
-        label=tf.image.central_crop(label,0.8)
-
-        label=tf.one_hot(indices=tf.squeeze(label), depth=4)
+        with tf.name_scope('data_augmentation'):
+            frames=tf.image.central_crop(frames,0.8)
+            label=tf.image.central_crop(label,0.8)
+        #@tf.function()
+        #def customized_cropp():
+            #if mode = 'train':
+                #r_path = r_path_train
+            #elif mode = 'test':
+                #r_path = r_path_test
+            #elif mode = 'label':
+                #r_path = r_path_label
+            #
+            #max_hei = 0
+            #max_wid = 0
+            #cropped_images = []
+            #for filename in os.listdir(r_path):
+                #data = img.imread(r_path + filename)
+                #mask = data > 0             # Mask of non-black pixels (assuming image has a single channel).
+                #coords = np.argwhere(mask)  # Coordinates of non-black pixels.
+                #try:                        # Bounding box of non-black pixels.
+                    #x0, y0 = coords.min(axis=0)
+                    #x1, y1 = coords.max(axis=0) + 1   # slices are exclusive at the top
+                #except:
+                    #pass
+            #
+                #cropped = data[x0:x1, y0:y1]          # Get the contents of the bounding box.
+                #cropped_images.append(cropped)        # Save the cropped images in a list as data
+                #if cropped.shape[0] > max_hei:
+                    #max_hei = cropped.shape[0]
+                #if cropped.shape[1] > max_hei:
+                    #max_wid = cropped.shape[1]
+            #    black = [0,0,0]
+                #for image in cropped_images:
+                    #constant=cv2.copyMakeBorder(image, (max_hei - image.shape[0])/2, (max_wid - image.shape[0])/2, (max_wid -    image.shape[0])/2, (max_wid - #image.shape[0])/2, cv2.BORDER_CONSTANT,value=black)
 
         return frames, label
-
-=======
-        with tf.name_scope('data_augmentation'):
-            #frames=tf.image.central_crop(frames,0.8)
-            #label=tf.image.central_crop(label,0.8)
-            @tf.function()
-            def customized_cropp():
-                max_hei = 0
-                max_wid = 0
-                cropped_images = []
-                   for i in frames:
-                       mask = frames > 0             # Mask of non-black pixels (assuming image has a single channel).
-                       coords = np.argwhere(mask)  # Coordinates of non-black pixels.
-                       try:                        # Bounding box of non-black pixels.
-                           x0, y0 = coords.min(axis=0)
-                           x1, y1 = coords.max(axis=0) + 1   # slices are exclusive at the top
-                       except:
-                            pass
-                       cropped= frames[x0:x1, y0:y1]          # Get the contents of the bounding box.
-                       cropped_images.append(cropped)        # Save the cropped images in a list as data
-                       if cropped.shape[0] > max_hei:
-                           max_hei = cropped.shape[0]
-                       if cropped.shape[1] > max_hei:
-                           max_wid = cropped.shape[1]
-                    black = [0,0,0]
-                       for image in cropped_images:
-                       constant=cv2.copyMakeBorder(image, (max_hei - image.shape[0])/2, (max_wid - image.shape[0])/2, (max_wid -    image.shape[0])/2, (max_wid - #image.shape[0])/2, cv2.BORDER_CONSTANT,value=black)
-        
-            return frames, label
->>>>>>> c8a82b6bc13ab491a86f279dfcc9f69f7ada32af
-
 
     dataset = tf.data.TFRecordDataset(filenames=filenames)
 
@@ -104,19 +102,12 @@ def create_dataset(filenames, mode, num_epochs=1, batch_size=1,perform_shuffle=F
         # Randomizes input using a window of 256 elements (read into memory)
         dataset = dataset.shuffle(buffer_size=256)
 
-
     # Repeats dataset this # times
     dataset = dataset.repeat(num_epochs)
-
 
     # Batch size to use
     dataset = dataset.batch(batch_size)
 
-
-<<<<<<< HEAD
-    return dataset
-=======
     iterator = dataset.make_one_shot_iterator()
     batch_features, batch_labels = iterator.get_next()
     return batch_features, batch_labels
->>>>>>> c8a82b6bc13ab491a86f279dfcc9f69f7ada32af

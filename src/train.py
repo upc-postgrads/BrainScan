@@ -6,7 +6,7 @@ from tensorflow.python.keras import backend as K
 import numpy as np
 import sys
 from utils import utils
-
+tf.enable_eager_execution()
 
 
 
@@ -33,12 +33,16 @@ MODEL_TO_USE = "unet_keras"
 #LOGDIR = '/tmp/aidl'
 #Aitor
 TRAININGDIR = "/Volumes/Macintosh_SSD_Samsung_EVO_256_GB/BrainTumourImages/Generated"
+<<<<<<< HEAD
 LOGDIR = "/Users/aitorjara/tmp/aidl"
 =======
 RESTORE_WEIGHTS=False
 TRAININGDIR = "/path_of_training_images"
 LOGDIR = '/tmp'
 >>>>>>> f6ce420f56fed03632fc0fd2d5ca92d5b13a068d
+=======
+LOGDIR = "/Users/aitorjara/Desktop/BrainTumourImages/tmp"
+>>>>>>> c8a82b6bc13ab491a86f279dfcc9f69f7ada32af
 
 
 #########################################################
@@ -51,7 +55,7 @@ def count_records(path):
     num = 0
     for record_file in os.listdir(path):
         TFRecord_path = os.path.join(path,record_file)
-        for record in tf.io.tf_record_iterator(TFRecord_path):
+        for record in tf.data.TFRecordDataset(TFRecord_path):
             num += 1
     return num
 

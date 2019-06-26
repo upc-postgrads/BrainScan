@@ -106,3 +106,4 @@ venv.bak/
 
 #Mac stuff:
 .DS_Store
+/src/unet/data/unet_membrane.hdf5
