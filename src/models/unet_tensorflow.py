@@ -86,7 +86,7 @@ def unet(data, training=False, norm_option=False, drop_val=0.5,binarize_labels=F
     deconv2 = tf.layers.conv2d_transpose(UpPath_conv2, 512, [2,2], strides=[2,2], padding='SAME', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*512))))
     if norm_option == True:
         deconv2 = tf.layers.batch_normalization(deconv2)
-    deconv2 = tf.nn.relu(deconv2)
+    deconv2 = tf.nn_.relu(deconv2)
     concat2 = tf.concat([conv6,deconv2], axis=-1)
     UpPath_conv3 = tf.layers.conv2d(concat2, 256, [3,3], strides=[1,1], padding='SAME', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*512))))
     if norm_option == True:
@@ -125,8 +125,10 @@ def unet(data, training=False, norm_option=False, drop_val=0.5,binarize_labels=F
         UpPath_conv8 = tf.layers.batch_normalization(UpPath_conv8)
     UpPath_conv8 = tf.nn.relu(UpPath_conv8)
     if binarize_labels:
-        UpPath_conv9 = tf.layers.conv2d(UpPath_conv8, 2, [1,1], strides=[1,1], padding='SAME', activation='softmax', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*64))))
+        UpPath_conv9 = tf.layers.conv2d(UpPath_conv8, 2, [1,1], strides=[1,1], padding='SAME', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*64))))
+        UpPath_conv9_soft = tf.nn.softmax(UpPath_conv9)
     else:
-        UpPath_conv9 = tf.layers.conv2d(UpPath_conv8, 4, [1,1], strides=[1,1], padding='SAME', activation='softmax', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*64))))
+        UpPath_conv9 = tf.layers.conv2d(UpPath_conv8, 4, [1,1], strides=[1,1], padding='SAME', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*64))))
+        UpPath_conv9_soft = tf.nn.softmax(UpPath_conv9)
     
-    return UpPath_conv9
+    return UpPath_conv9, UpPath_conv9_soft
