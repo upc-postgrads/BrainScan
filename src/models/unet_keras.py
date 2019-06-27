@@ -53,4 +53,4 @@ def unet(inputs, training=False,binarize_labels=False):
         conv10 = tf.keras.layers.Conv2D(4, 1, activation = 'softmax')(conv9)
         conv10_soft = tf.keras.activations.softmax(conv10)
 
-    return conv10
+    return conv10, conv10_soft
