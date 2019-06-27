@@ -52,10 +52,10 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
 
     if model == "unet_keras":
         from models import unet_keras as model
-        logits = model.unet(x, training_placeholder, binarize_labels=binarize_labels)
+        logits, logits_soft = model.unet(x, training_placeholder, binarize_labels=binarize_labels)
     elif model == "unet_tensorflow":
         from models import unet_tensorflow as model
-        logits = model.unet(x, training=training_placeholder, norm_option=True, binarize_labels=binarize_labels)
+        logits, logits_soft = model.unet(x, training=training_placeholder, norm_option=True, binarize_labels=binarize_labels)
 
     if perform_one_hot:
     #Forward and backprop pass
@@ -73,7 +73,7 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
         loss_op = tf.losses.get_total_loss(name='loss_op')
 
         #Define the IoU metrics and update operations
-        IoU_metrics, IoU_metrics_update = tf.metrics.mean_iou(labels=y, predictions=logits, num_classes=4, name='my_metric_IoU')
+        IoU_metrics, IoU_metrics_update = tf.metrics.mean_iou(labels=y, predictions=logits_soft, num_classes=4, name='my_metric_IoU')
         #Isolate the variables stored behind the scenes by the metric operation
         running_vars = tf.get_collection(tf.GraphKeys.LOCAL_VARIABLES, scope="my_metric_IoU")
         # Define initializer to initialize/reset running variables
