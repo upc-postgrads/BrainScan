@@ -6,7 +6,7 @@ import sys
 
 # U-NET MODEL
 
-def unet(data, training=False, norm_option=False, drop_val=0.5):
+def unet(data, training=False, norm_option=False, drop_val=0.5,binarize_labels=False):
 
     if norm_option != True and norm_option != False:
         sys.exit('Not a valid norm_option')
@@ -108,7 +108,7 @@ def unet(data, training=False, norm_option=False, drop_val=0.5):
     UpPath_conv5 = tf.nn.relu(UpPath_conv5)
     UpPath_conv6 = tf.layers.conv2d(UpPath_conv5, 128, [3,3], strides=[1,1], padding='SAME', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*128))))
     if norm_option == True:
-        UpPath_conv6 = tf.layers.batch_normalization(UpPath_conv6)
+        UpPath_conv6 = tf.layers.batch_normalization(UpPath_conv6, training=training)
     UpPath_conv6 = tf.nn.relu(UpPath_conv6)
 
     deconv4 = tf.layers.conv2d_transpose(UpPath_conv6, 128, [2,2], strides=[2,2], padding='SAME', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*128))))
@@ -124,7 +124,10 @@ def unet(data, training=False, norm_option=False, drop_val=0.5):
     if norm_option == True:
         UpPath_conv8 = tf.layers.batch_normalization(UpPath_conv8)
     UpPath_conv8 = tf.nn.relu(UpPath_conv8)
-    UpPath_conv9 = tf.layers.conv2d(UpPath_conv8, 4, [1,1], strides=[1,1], padding='SAME', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*64))))
+    if binarize_labels:
+        UpPath_conv9 = tf.layers.conv2d(UpPath_conv8, 2, [1,1], strides=[1,1], padding='SAME', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*64))))
+    else:
+        UpPath_conv9 = tf.layers.conv2d(UpPath_conv8, 4, [1,1], strides=[1,1], padding='SAME', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*64))))
     if norm_option == True:
         UpPath_conv9 = tf.layers.batch_normalization(UpPath_conv9)
     UpPath_conv9 = tf.nn.relu(UpPath_conv9)
