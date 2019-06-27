@@ -125,11 +125,8 @@ def unet(data, training=False, norm_option=False, drop_val=0.5,binarize_labels=F
         UpPath_conv8 = tf.layers.batch_normalization(UpPath_conv8)
     UpPath_conv8 = tf.nn.relu(UpPath_conv8)
     if binarize_labels:
-        UpPath_conv9 = tf.layers.conv2d(UpPath_conv8, 2, [1,1], strides=[1,1], padding='SAME', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*64))))
+        UpPath_conv9 = tf.layers.conv2d(UpPath_conv8, 2, [1,1], strides=[1,1], padding='SAME', activation='softmax', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*64))))
     else:
-        UpPath_conv9 = tf.layers.conv2d(UpPath_conv8, 4, [1,1], strides=[1,1], padding='SAME', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*64))))
-    if norm_option == True:
-        UpPath_conv9 = tf.layers.batch_normalization(UpPath_conv9)
-    UpPath_conv9 = tf.nn.relu(UpPath_conv9)
-
+        UpPath_conv9 = tf.layers.conv2d(UpPath_conv8, 4, [1,1], strides=[1,1], padding='SAME', activation='softmax', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*64))))
+    
     return UpPath_conv9
