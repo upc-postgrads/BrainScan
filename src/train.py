@@ -145,11 +145,11 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
             try:
                 while True:
                     #training
-                    #_,cost,summary_val,step_gl = sess.run([train_op,loss_op,summary_op,global_step], feed_dict={handle: train_handle})
-                    #writer.add_summary(summary_val,step_gl)
+                    _,cost,summary_val,step_gl = sess.run([train_op,loss_op,summary_op,global_step], feed_dict={handle: train_handle})
+                    writer.add_summary(summary_val,step_gl)
 
-                    #step += 1
-                    #print('\n Training step: Epoch {}, batch {} -- Loss: {:.3f}'.format(epoch+1, step+1, cost))
+                    step += 1
+                    print('\n Training step: Epoch {}, batch {} -- Loss: {:.3f}'.format(epoch+1, step, cost))
 
 
                     #validation
@@ -157,7 +157,7 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
                         total_validation_loss = [] #list where we will store the loss at each batch
                         sess.run(validation_iterator.initializer)
                         step_val=0
-                        print('\n Step {}: Saving weights to {}'.format(step+1, model_checkpoint_path))
+                        print('\n Step {}: Saving weights to {}'.format(step, model_checkpoint_path))
                         # initialize/reset the running variables of the IoU metrics
                         sess.run(running_vars_initializer)
                         try:
@@ -173,6 +173,8 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
                             writer.add_summary(validation_loss_summary,step_gl)
                             #IoU metrics
                             IoU_score = sess.run(IoU_metrics)
+                            IoU_summary = tf.Summary(value=[tf.Summary.Value(tag="IoU_metrics", simple_value=IoU_score)])
+                            writer.add_summary(IoU_summary,step_gl)
                         print('\n Epoch {} and training batch {} -- Validation loss {:.3f} and IoU metrics {:.3f}'.format(epoch+1, step,total_validation_loss, IoU_score))
 
 
