@@ -119,8 +119,8 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
      OneHot  BinaryLabels  Layer Input Layer Output        Loss    
      SI        SI            2            2            softmax_cross_entropy
      SI        NO            4            4            softmax_cross_entropy
-     NO        SI            1            1            sparse_softmax_cross_entropy
-     NO        NO            1            4            sigmoid_cross_entropy
+     NO        SI            1            1            sigmoid_cross_entropy
+     NO        NO            1            4            sparse_softmax_cross_entropy
          
     """        
     if label_input_size>1: #OneHotEncoding
@@ -133,9 +133,10 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
         else:
             loss_op= tf.reduce_mean(tf.losses.sparse_softmax_cross_entropy(labels=y, logits=logits))           
 
+        
     if label_input_size>1: #OneHotEncoding
         #Define the IoU metrics and update operations
-        IoU_metrics, IoU_metrics_update = tf.metrics.mean_iou(labels=y, predictions=logits_soft, num_classes=label_input_size, name='my_metric_IoU')
+        IoU_metrics, IoU_metrics_update = tf.metrics.mean_iou(labels=y_onehot, predictions=logit_onehot, num_classes=label_input_size, name='my_metric_IoU')
         #Isolate the variables stored behind the scenes by the metric operation
         running_vars = tf.get_collection(tf.GraphKeys.LOCAL_VARIABLES, scope="my_metric_IoU")
         # Define initializer to initialize/reset running variables
@@ -242,6 +243,13 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
                         validation_loss_summary = tf.Summary(value=[tf.Summary.Value(tag="loss", simple_value=total_validation_loss)])
                         writer_val.add_summary(validation_loss_summary,step_gl)
                         
+                        #IoU metrics
+                        IoU_score = sess.run(IoU_metrics)
+                        IoU_summary = tf.Summary(value=[tf.Summary.Value(tag="IoU_metrics", simple_value=IoU_score)])
+                        writer.add_summary(IoU_summary,step_gl)
+                        print('\n Epoch {} and training batch {} -- Validation loss {:.3f} and IoU metrics {:.3f}'.format(epoch+1, step,total_validation_loss, IoU_score))
+
+                        """
                         if label_input_size>1: #OneHotEncoding
                             #IoU metrics
                             IoU_score = sess.run(IoU_metrics)
@@ -250,6 +258,7 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
                             print('\n Epoch {} and training batch {} -- Validation loss {:.3f} and IoU metrics {:.3f}'.format(epoch+1, step,total_validation_loss, IoU_score))
                         else:
                             print('\n Epoch {} and training batch {} -- Validation loss {:.3f}'.format(epoch+1, step,total_validation_loss))
+                        """
                     
                     #saving    
                     if step % STEPS_SAVER == 0:
