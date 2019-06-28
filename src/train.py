@@ -136,7 +136,7 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
         
     if label_input_size>1: #OneHotEncoding
         #Define the IoU metrics and update operations
-        IoU_metrics, IoU_metrics_update = tf.metrics.mean_iou(labels=y_onehot, predictions=logit_onehot, num_classes=label_input_size, name='my_metric_IoU')
+        IoU_metrics, IoU_metrics_update = tf.metrics.mean_iou(labels=y, predictions=logits_soft, num_classes=label_input_size, name='my_metric_IoU')
         #Isolate the variables stored behind the scenes by the metric operation
         running_vars = tf.get_collection(tf.GraphKeys.LOCAL_VARIABLES, scope="my_metric_IoU")
         # Define initializer to initialize/reset running variables
