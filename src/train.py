@@ -98,20 +98,22 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
     
     """
    
-    tf.losses.softmax_cross_entropy -> tf.nn.softmax_cross_entropy_with_logits_v2 -> keras.categorical_crossentropy --> >2 clases -> Softmax (onehot)
-    tf.losses.sparse_softmax_cross_entropy -> tf.nn.sparse_softmax_cross_entropy_with_logits. -> keras.sparse_categorical_crossentropy -> (No one hot)
-    tf.losses.sigmoid_cross_entropy -> tf.nn.sigmoid_cross_entropy_with_logits. -> keras.binary_crossentrpy -> 2 clases -> Sigmoid (onehot)
+    tf.losses.softmax_cross_entropy -> tf.nn.softmax_cross_entropy_with_logits_v2 -> keras.categorical_crossentropy 
+    tf.losses.sparse_softmax_cross_entropy -> tf.nn.sparse_softmax_cross_entropy_with_logits. -> keras.sparse_categorical_crossentropy 
+    tf.losses.sigmoid_cross_entropy -> tf.nn.sigmoid_cross_entropy_with_logits. -> keras.binary_crossentrpy 
         
     If your targets are one-hot encoded, use categorical_crossentropy.
         Examples of one-hot encodings:
             [1,0,0]
             [0,1,0]
             [0,0,1]
-    But if your targets are integers, use sparse_categorical_crossentropy.
+    If your targets are integers, use sparse_categorical_crossentropy.
         Examples of integer encodings (for the sake of completion):
             1
             2
             3
+            
+    If your target is one vector of values (0,1), use Sigmoid             
 
 
      OneHot  BinaryLabels  Layer Input Layer Output        Loss    

@@ -2,13 +2,13 @@ import train
 import argparse
 
 
-TRAININGDIR = "/home/deivit/Desktop/dades/Documents/david/upc/AIDL/projecte/unet/BrainTumourImages/Generated_50-50"
+TRAININGDIR = "../BrainTumourImages/Generated_50-50"
 LOGDIR = '/tmp/aidl/current'
 NUM_EPOCHS = 5 
 BATCH_SIZE_TRAIN = 25
 BATCH_SIZE_TEST = 25
 BATCH_SIZE_VALID = 25
-STEP_METRICS = 10
+STEP_METRICS = 100
 LEARNING_RATE = 1e-5
 STEPS_SAVER = 100
 MODEL_TO_USE = "unet_keras"
