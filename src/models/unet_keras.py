@@ -48,7 +48,9 @@ def unet(inputs, training=False,binarize_labels=False):
 
     if binarize_labels:
         conv10 = tf.keras.layers.Conv2D(2, 1)(conv9)
+        conv10_soft = tf.keras.activations.softmax(conv10)
     else:
         conv10 = tf.keras.layers.Conv2D(4, 1)(conv9)
+        conv10_soft = tf.keras.activations.softmax(conv10)
 
-    return conv10
+    return conv10, conv10_soft
