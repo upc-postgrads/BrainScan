@@ -3,6 +3,21 @@ import tensorflow as tf
 import glob
 #Data pipeline using TFRecords
 
+
+def get_tensor_size(perform_one_hot,binarize_labels):
+    
+    if perform_one_hot:    
+        if binarize_labels:
+            return 2,2
+        else:
+            return 4,4
+    else:
+        if binarize_labels:
+            return 1,1
+        else:
+            return 1,4   
+        
+
 def get_file_lists(data_dir):
 
     #This function returns three lists (train_list, valid_list and test_list) containing the directories of all the files in the
@@ -15,6 +30,7 @@ def get_file_lists(data_dir):
     if len(train_list) == 0 and len(valid_list) == 0:
         raise IOError('No files found at specified path!')
     return train_list, valid_list, test_list
+
 
 
 
