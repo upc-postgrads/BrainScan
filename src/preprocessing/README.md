@@ -1,7 +1,8 @@
 ### GenerateTFRecords.py
-Due to the nature of this dataset, where every patient is represented with 4 different volumes of the brain, the idea of creating a generator was somehow problematic. As we had to "slice" the data in 2d images we came up with the idea of slicing the first slice of every volume and storing it as if they were different channels from the same image, processing it and doing it "n" times up until the last image, and with all the patients, ending up with a really long tensor of binary data called TFRecord, compatible with the tensorflow function tf.data.TFRecordsDataset(). 
+As we already said in the README file of the repository, the dataset that we used was the one from the BRATS challenge. In such dataset, each patient is represented as a nifti file. Therefore, in this script we read each of these nifti files and store them as a TFRecord by means of the function _tf.data.TFRecords.Dataset()_.\
+Recall that in the already mentioned README, we explained how to represent each patient as a concatenation of slices. That was the procedure followed so as to perform the storage of the dataset.
 
-This generator starts defining some functions that allow us to:<br />
+In the script, we begin by defining some functions that allow us to:<br />
 1- Store the ID of every patient<br />
 2- Discard fully black images that would add noise to the training<br />
 3- Normalize and also store the valid images in grayscale<br />
