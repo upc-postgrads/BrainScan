@@ -39,4 +39,6 @@ if __name__ == '__main__':
 
 #we call the train function
     train.main(args.trainingdir,args.model,args.num_epochs,args.size_batch_train,args.size_batch_test,args.size_batch_valid, args.step_metrics, args.steps_saver,args.learning_rate, args.logdir, args.restore_weights,args.perform_one_hot,args.binarize_labels)
+#we call the test function    
+    test.main(args.trainingdir,args.model,args.num_epochs,args.size_batch_train,args.size_batch_test,args.size_batch_valid, args.logdir,args.perform_one_hot,args.binarize_labels)
 
