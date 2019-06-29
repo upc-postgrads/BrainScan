@@ -8,11 +8,9 @@ import sys
 from utils import utils
 
 """
-
 tf.losses.softmax_cross_entropy -> tf.nn.softmax_cross_entropy_with_logits_v2 -> keras.categorical_crossentropy
 tf.losses.sparse_softmax_cross_entropy -> tf.nn.sparse_softmax_cross_entropy_with_logits. -> keras.sparse_categorical_crossentropy
 tf.losses.sigmoid_cross_entropy -> tf.nn.sigmoid_cross_entropy_with_logits. -> keras.binary_crossentrpy
-
 If your targets are one-hot encoded, use categorical_crossentropy.
     Examples of one-hot encodings:
         [1,0,0]
@@ -23,16 +21,12 @@ If your targets are integers, use sparse_categorical_crossentropy.
         1
         2
         3
-
 If your target is one vector of values (0,1), use Sigmoid
-
-
  OneHot  BinaryLabels  Layer Input Layer Output        Loss
  SI        SI            2            2            softmax_cross_entropy
  SI        NO            4            4            softmax_cross_entropy
  NO        SI            1            1            sigmoid_cross_entropy
  NO        NO            1            4            sparse_softmax_cross_entropy
-
 """
 
 def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size_batch_valid, step_metrics, steps_saver, learning_rate, logdir, restore_weights,perform_one_hot,binarize_labels):
@@ -162,7 +156,7 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
                 while True:
 
                     #train
-                    _,cost,summary_val,step_gl,logits_val,_ = sess.run([train_op,loss_op,summary_op,global_step,logits,logits_soft], feed_dict={handle: train_handle})
+                    _,cost,summary_val,step_gl,logits_val,_ = sess.run([train_op,loss_op,summary_op,global_step,logits,logits_soft], feed_dict={handle: train_handle,training_placeholder: True})
 
                     writer.add_summary(summary_val,step_gl)
 
@@ -193,12 +187,6 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
                         writer_val.add_summary(validation_loss_summary,step_gl)
 
                         #IoU metrics
-                        IoU_score = sess.run(IoU_metrics)
-                        IoU_summary = tf.Summary(value=[tf.Summary.Value(tag="IoU_metrics", simple_value=IoU_score)])
-                        writer.add_summary(IoU_summary,step_gl)
-                        print('\n Epoch {} and training batch {} -- Validation loss {:.3f} and IoU metrics {:.3f}'.format(epoch+1, step,total_validation_loss, IoU_score))
-
-                        """
                         if label_input_size>1: #OneHotEncoding
                             #IoU metrics
                             IoU_score = sess.run(IoU_metrics)
@@ -207,7 +195,6 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
                             print('\n Epoch {} and training batch {} -- Validation loss {:.3f} and IoU metrics {:.3f}'.format(epoch+1, step,total_validation_loss, IoU_score))
                         else:
                             print('\n Epoch {} and training batch {} -- Validation loss {:.3f}'.format(epoch+1, step,total_validation_loss))
-                        """
 
                     #saving
                     if step % steps_saver == 0:
@@ -217,4 +204,4 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
             except tf.errors.OutOfRangeError:
                 pass
 
-        return
+    return
