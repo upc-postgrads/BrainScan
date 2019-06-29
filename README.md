@@ -29,3 +29,9 @@ In the different experiments that we have carried out, different ways of express
 
 
 ### Testing
+
+
+### References
+* https://github.com/zhixuhao/unet/blob/master/model.py
+* http://ronny.rest/blog/post_2017_09_11_tf_metrics/
+* https://arxiv.org/pdf/1505.04597.pdf
