@@ -19,6 +19,21 @@ It is worth noting that the construction of the dataset is customized by means o
 
 ## train.py
 
+This function performs the segmentation itself. Let us now develop the different steps.
+
+First of all, it creates one iterator for each of the three datsets of training, validation and testing (_train_iterator_, _validation_iterator_ and _test_iterator_ respectively) along with a feedable element so as to switch between the previous three (_handle_). Combining these ingredients, we construct an iterator, _iterator_, that gives a batch of the desired dataset in such a way that it recalls the previous generated batch and starts from this point. That is, it does not give the same batch all the time. It is worth noting the fact that the images and the labels have to be floats (they cannot be integers) so as to perform the convolutions of the U-Net architecture.
+
+The next step is to input the images into the U-Net network, which can be the keras or the tensorflow one (depending on the _model_ parameter). However, since both models need to input an argument saying whether it is performing or not a training step, we define a feedable variable so as to store this information (_training_placeholder_).   
+
+As we already mentioned in the README of the repository, we take different approaches on the data: performing one-hot encoding and/or binarizing the labels. This information is input by means of two parameters, _perform_one_hot_ and _binarize_labels_. However, at the begining of the _main_ function, we translate this information into two other variables that are _label_input_size_ and _label_output_size_. According to the values of this variables, the one-hot encoding and the binarization are going to be implemented or not. The last table inside the comment at the begining of the function depicts this idea.
+
+Once the output of the model has been computed, we compute the losses and the metrics. The chosen loss will depend on the _label_input_size_ and _label_output_size_, as explained at the beginning of the comment. On the other hand, so as to compute the IoU metrics, the labels and logits have to be one-hot encoded. Therefore, such metrics can only be implemented in case _label_input_size>1_.
+
+Afterwards, we perform an optimization step using the Adam optimizer, which uses a default learning rate of 1e-5. Finally, we use the _tf.summary_ function so as to visualize the results on tensorboard.
+
+At this point, we run the session. We begin by inicializing the training iterator (_train_iterator_) and then, we start computing the loss for each batch. Every _step_metrics_ batches of train images, we perform a validation epoch. That is, we compute the loss and IoU metrics for each validation batch. Their means are going to be the loss and metrics associated to the whole epoch. Observe that at the beginning of each epoch we are initializing the validation iterator (_validation_iterator_).\
+In addition, every _steps_saver_ batches of training images, we save the weights.
+
 
 ## main.py
 
