@@ -7,31 +7,6 @@ import numpy as np
 import sys
 from utils import utils
 
-
-
-def generalized_dice_loss(labels, logits):
-
-    smooth = 1e-17
-    shape = tf.TensorShape(logits.shape).as_list()
-    depth = int(shape[-1])
-    labels = tf.one_hot(labels, depth, dtype=tf.float32)
-    logits = tf.nn.softmax(logits)
-    weights = 1.0 / (tf.reduce_sum(labels, axis=[0, 1, 2])**2)
-
-    #labels=tf.squeeze(labels, [3])
-    numerator = tf.reduce_sum(labels * logits, axis=[0, 1, 2])
-    numerator = tf.reduce_sum(weights * numerator)
-
-
-    denominator = tf.reduce_sum(labels + logits, axis=[0, 1, 2])
-    denominator = tf.reduce_sum(weights * denominator)
-
-    loss = 1.0 - 2.0*(numerator + smooth)/(denominator + smooth)
-    return loss    
-
-
-#########################################################
-
 #Training parameters
 NUM_EPOCHS = 5
 BATCH_SIZE_TRAIN = 25
@@ -47,18 +22,33 @@ LOGDIR = '/tmp'
 PERFORM_ONE_HOT=True
 BINARIZE_LABELS=False
 
-def get_tensor_size(perform_one_hot,binarize_labels):
-  
-    if perform_one_hot:    
-        if binarize_labels:
-            return 2,2
-        else:
-            return 4,4
-    else:
-        if binarize_labels:
-            return 1,1
-        else:
-            return 1,4        
+"""
+
+tf.losses.softmax_cross_entropy -> tf.nn.softmax_cross_entropy_with_logits_v2 -> keras.categorical_crossentropy 
+tf.losses.sparse_softmax_cross_entropy -> tf.nn.sparse_softmax_cross_entropy_with_logits. -> keras.sparse_categorical_crossentropy 
+tf.losses.sigmoid_cross_entropy -> tf.nn.sigmoid_cross_entropy_with_logits. -> keras.binary_crossentrpy 
+    
+If your targets are one-hot encoded, use categorical_crossentropy.
+    Examples of one-hot encodings:
+        [1,0,0]
+        [0,1,0]
+        [0,0,1]
+If your targets are integers, use sparse_categorical_crossentropy.
+    Examples of integer encodings (for the sake of completion):
+        1
+        2
+        3
+        
+If your target is one vector of values (0,1), use Sigmoid             
+
+
+ OneHot  BinaryLabels  Layer Input Layer Output        Loss    
+ SI        SI            2            2            softmax_cross_entropy
+ SI        NO            4            4            softmax_cross_entropy
+ NO        SI            1            1            sigmoid_cross_entropy
+ NO        NO            1            4            sparse_softmax_cross_entropy
+     
+"""      
 
 def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size_batch_valid, step_metrics, steps_saver, learning_rate, logdir, restore_weights,perform_one_hot,binarize_labels):
 
@@ -96,33 +86,7 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
     y.set_shape([None, 192, 192, label_input_size])        
     y = tf.cast(y, tf.int32)
     
-    """
-   
-    tf.losses.softmax_cross_entropy -> tf.nn.softmax_cross_entropy_with_logits_v2 -> keras.categorical_crossentropy 
-    tf.losses.sparse_softmax_cross_entropy -> tf.nn.sparse_softmax_cross_entropy_with_logits. -> keras.sparse_categorical_crossentropy 
-    tf.losses.sigmoid_cross_entropy -> tf.nn.sigmoid_cross_entropy_with_logits. -> keras.binary_crossentrpy 
-        
-    If your targets are one-hot encoded, use categorical_crossentropy.
-        Examples of one-hot encodings:
-            [1,0,0]
-            [0,1,0]
-            [0,0,1]
-    If your targets are integers, use sparse_categorical_crossentropy.
-        Examples of integer encodings (for the sake of completion):
-            1
-            2
-            3
-            
-    If your target is one vector of values (0,1), use Sigmoid             
-
-
-     OneHot  BinaryLabels  Layer Input Layer Output        Loss    
-     SI        SI            2            2            softmax_cross_entropy
-     SI        NO            4            4            softmax_cross_entropy
-     NO        SI            1            1            sigmoid_cross_entropy
-     NO        NO            1            4            sparse_softmax_cross_entropy
-         
-    """        
+  
     if label_input_size>1: #OneHotEncoding
         loss_op= tf.reduce_mean(tf.losses.softmax_cross_entropy(onehot_labels=y, logits=logits))
         #tf.losses.softmax_cross_entropy(onehot_labels=y, logits=logits)
