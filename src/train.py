@@ -175,7 +175,7 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
                         sess.run(running_vars_initializer)
                         try:
                             while True:
-                                cost_valid, _ = sess.run([loss_op, IoU_metrics_update], feed_dict={handle: validation_handle})
+                                cost_valid, _ = sess.run([loss_op, IoU_metrics_update], feed_dict={handle: validation_handle,training_placeholder: False})
                                 total_validation_loss.append(cost_valid)
                                 step_val += 1
                                 #print('\nValidation step: Epoch {}, batch {} -- Loss: {:.3f}'.format(epoch+1, step_val, cost_valid))
