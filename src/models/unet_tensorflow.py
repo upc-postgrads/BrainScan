@@ -133,4 +133,4 @@ def unet(data, training=False, norm_option=False, drop_val=0.5,label_output_size
     else:
         UpPath_conv9_soft = tf.nn.softmax(UpPath_conv9)
         
-return UpPath_conv9, UpPath_conv9_soft
+    return UpPath_conv9, UpPath_conv9_soft
