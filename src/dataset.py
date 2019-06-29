@@ -18,11 +18,7 @@ def get_tensor_size(perform_one_hot,binarize_labels):
             return 1,4   
         
 
-def get_file_lists(data_dir):
-
-    #This function returns three lists (train_list, valid_list and test_list) containing the directories of all the files in the
-    #specified path
-    #Parameter: data_dir is the directory where the TFRecords are stored.
+def get_file_lists(data_dir):    
 
     train_list = glob.glob(data_dir + '/Training/' + '*')
     valid_list = glob.glob(data_dir + '/Validation/' + '*')
