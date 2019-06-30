@@ -8,15 +8,15 @@ import sys
 from utils import utils
 
 
-def main(trainingdir, model, num_epochs, size_batch_test, logdir, logdir_w, perform_one_hot, binarize_labels):
+def main(trainingdir, model, num_epochs, size_batch_test, logdir, logdir_w, perform_one_hot,binarize_labels):
 
     global_step=tf.get_variable('global_step',dtype=tf.int32,initializer=0,trainable=False)
 
-    _, _, test_list = get_file_lists(trainingdir)
+    train_list, valid_list, test_list = get_file_lists(trainingdir)
 
     label_input_size,label_output_size=get_tensor_size(perform_one_hot,binarize_labels)
 
-
+  
     test_dataset = create_dataset(filenames=test_list,mode="testing", num_epochs=1, batch_size=size_batch_test,perform_one_hot=perform_one_hot,binarize_labels=binarize_labels)
     test_iterator = test_dataset.make_initializable_iterator()
 
@@ -62,8 +62,7 @@ def main(trainingdir, model, num_epochs, size_batch_test, logdir, logdir_w, perf
 
         # Initialize Variables
         #restore_weights:
-        #saver.restore(sess, tf.train.latest_checkpoint(logdir))
-        saver.restore(sess, logdir)
+        saver.restore(sess, tf.train.latest_checkpoint(logdir))
         # else:
         # sess.run(tf.global_variables_initializer())
         # sess.run(tf.local_variables_initializer())
@@ -73,14 +72,15 @@ def main(trainingdir, model, num_epochs, size_batch_test, logdir, logdir_w, perf
 
 
         sess.run(test_iterator.initializer)
-
+ 
         try:
             print("there")
             while True:
-                summary_val,logits_test = sess.run([summary_test,logits_soft],feed_dict={handle:test_handle,training_placeholder: False})
+                summary_val,logits_test = sess.run([summary_test,logits_soft],feed_dict={handle:test_handle,training_placeholder:False})
+                      
                 writer.add_summary(summary_val)
 
         except tf.errors.OutOfRangeError:
             print("here")
-
+   
     return
