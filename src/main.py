@@ -1,10 +1,11 @@
 import train
+import test
 import argparse
 
 
 #Training parameters
-TRAININGDIR = "/home/deivit/Desktop/dades/Documents/david/upc/AIDL/projecte/unet/BrainTumourImages/Generated_50-50"
-LOGDIR = '/tmp/aidl/current'
+TRAININGDIR = "J:/Task01_BrainTumour/Generated"
+LOGDIR = 'J:/Task01_BrainTumour/Generated/logs'
 NUM_EPOCHS = 5 
 BATCH_SIZE_TRAIN = 25
 BATCH_SIZE_TEST = 25
@@ -14,8 +15,8 @@ LEARNING_RATE = 1e-5
 STEPS_SAVER = 100
 MODEL_TO_USE = "unet_keras"
 RESTORE_WEIGHTS=False
-PERFORM_ONE_HOT=False
-BINARIZE_LABELS=True
+PERFORM_ONE_HOT=True
+BINARIZE_LABELS=False
 
 
 if __name__ == '__main__':
@@ -37,6 +38,15 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
 
-#we call the train function
-    train.main(args.trainingdir,args.model,args.num_epochs,args.size_batch_train,args.size_batch_test,args.size_batch_valid, args.step_metrics, args.steps_saver,args.learning_rate, args.logdir, args.restore_weights,args.perform_one_hot,args.binarize_labels)
-
+    print("Are we testing or training? True for training, False for testing")
+    
+    training = input('Enter your input:') 
+    if training :
+    
+        #we call the train function
+        train.main(args.trainingdir,args.model,args.num_epochs,args.size_batch_train,args.size_batch_test,args.size_batch_valid, args.step_metrics, args.steps_saver,args.learning_rate, args.logdir, args.restore_weights,args.perform_one_hot,args.binarize_labels)
+    
+    else:
+    
+        #we call the test function    
+        test.main(args.trainingdir,args.model,args.num_epochs,args.size_batch_train,args.size_batch_test,args.size_batch_valid, args.logdir,args.perform_one_hot,args.binarize_labels)
