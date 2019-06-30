@@ -67,6 +67,7 @@ def unet(data, training=False, norm_option=False, drop_val=0.5,label_output_size
     conv_bottle_2 = tf.nn.relu(conv_bottle_2)
     
     drop = tf.cond(training, lambda: tf.layers.dropout(conv_bottle_2, rate=drop_val), lambda: conv_bottle_2) 
+    
     #Upsampling path (Deconvolutional layers)
     deconv1 = tf.layers.conv2d_transpose(drop, 1024, [2,2], strides=[2,2], padding='SAME', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*1024))))
     if norm_option == True:
