@@ -115,7 +115,7 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
         # tf.summary.image('prediction_1',tf.expand_dims(logits_soft[:,:,:,1],axis=-1))
         # if label_output_size>2:
             # tf.summary.image('prediction_2',tf.expand_dims(logits_soft[:,:,:,2],axis=-1))
-            # tf.summary.image('prediction_3',tf.expand_dims(logits_soft[:,:,:,3],axis=-1))
+    tf.summary.image('logits',tf.expand_dims(logits_soft[:,:,:,0],axis=-1))
 
     #tf.summary.histogram("logits",logits)
 
@@ -150,7 +150,7 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
             # sess.run(train_iterator.initializer)
             # step=0
             try:
-            
+                sess.run(logits_soft,feed_dict={x:x_test_batch})
             
                 # while True:
 
@@ -177,7 +177,7 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
                                 # cost_valid, _ = sess.run([loss_op, IoU_metrics_update], feed_dict={handle: validation_handle,training_placeholder: False})
                                 # total_validation_loss.append(cost_valid)
                                 # step_val += 1
-                                print('\nValidation step: Epoch {}, batch {} -- Loss: {:.3f}'.format(epoch+1, step_val, cost_valid))
+                                # print('\nValidation step: Epoch {}, batch {} -- Loss: {:.3f}'.format(epoch+1, step_val, cost_valid))
                         # except tf.errors.OutOfRangeError:
                             # pass
                         # loss

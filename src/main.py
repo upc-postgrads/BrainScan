@@ -3,8 +3,8 @@ import argparse
 
 
 #Training parameters
-TRAININGDIR = "/home/deivit/Desktop/dades/Documents/david/upc/AIDL/projecte/unet/BrainTumourImages/Generated_50-50"
-LOGDIR = '/tmp/aidl/current'
+TRAININGDIR = "J:/Task01_BrainTumour/Generated"
+LOGDIR = 'J:/Task01_BrainTumour/Generated/logs'
 NUM_EPOCHS = 5 
 BATCH_SIZE_TRAIN = 25
 BATCH_SIZE_TEST = 25
@@ -18,8 +18,8 @@ PERFORM_ONE_HOT=True
 BINARIZE_LABELS=False
 
 
-#The parameters can be introduced by the user
-if __name__ == '__main__':    
+if __name__ == '__main__':
+    #The parameters can be introduced by the user
     parser = argparse.ArgumentParser(description='Pipeline execution')
     parser.add_argument('-t', '--trainingdir', default=TRAININGDIR, help='Location of the TFRecors for training')
     parser.add_argument('-l', '--logdir', default=LOGDIR, help='Log dir for tfevents')
@@ -37,12 +37,12 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
 
-    print("Are we testing or training? True for training, False for testing")
+    print("Are we testing or training, True for training, False for testing")
     
-    training = raw_input('Enter your input:') 
+    training = input('Enter your input:') 
     if training :
     
-        #we call the train function
+#we call the train function
         train.main(args.trainingdir,args.model,args.num_epochs,args.size_batch_train,args.size_batch_test,args.size_batch_valid, args.step_metrics, args.steps_saver,args.learning_rate, args.logdir, args.restore_weights,args.perform_one_hot,args.binarize_labels)
     
     else:
