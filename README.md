@@ -35,3 +35,4 @@ In the different experiments that we have carried out, different ways of express
 * https://github.com/zhixuhao/unet/blob/master/model.py
 * http://ronny.rest/blog/post_2017_09_11_tf_metrics/
 * https://arxiv.org/pdf/1505.04597.pdf
+* https://medium.com/ymedialabs-innovation/how-to-use-dataset-and-iterators-in-tensorflow-with-code-samples-3bb98b6b74ab
