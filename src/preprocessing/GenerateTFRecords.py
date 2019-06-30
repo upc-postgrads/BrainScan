@@ -24,10 +24,11 @@ class GenerateTFRedord:
                        For validation files the resulting path will be: output_dir/Validation.
                        For test files the resulting path will be: output_dir/Test.
     :param number_of_volumes_to_process: The number of volumes to process. both for training, for testing.
-    :param percent_for_validation: Percentage of the resulting images that will be reserved for validation.
+    :param percent_for_validation: Percentaje of the resulting images that will be reserved for validation.
                                    Ej. If value is 10, then the 10% (random) of the TFRecords will be reserved for validation.
-    :param percent_of_labeled: Percentage of the images labeled vs non labeled.
-                        If 0, then all images are used, it does not matter if labeled or not  
+    :param fifty_percent_of_labeled:True/False
+                        If True, then 50% of labeled images and 50% of non labeled are returned.
+                        If False, then all images are used, it does not matter if labeled or not  
     """
 
     OUTPUT_FILE_TYPE = "jpg" # "jpg", "png"
@@ -44,7 +45,7 @@ class GenerateTFRedord:
     DEPTH=4
     
 
-    def __init__(self, image_path_tr,label_path_tr,image_path_ts,output_dir,number_of_volumes_to_process,percent_for_validation=5,percent_of_labeled=0):
+    def __init__(self, image_path_tr,label_path_tr,image_path_ts,output_dir,number_of_volumes_to_process,percent_for_validation=5,fifty_percent_of_labeled=True):
         self.imagePathTR = image_path_tr
         self.labelPathTR = label_path_tr
         self.imagePathTS=image_path_ts
@@ -54,7 +55,7 @@ class GenerateTFRedord:
         self.outputimagePathTS=os.path.join(self.outputDir,"Test")
         self.number_of_volumes_to_process=number_of_volumes_to_process
         self.percent_for_validation=percent_for_validation
-        self.percent_of_labeled=percent_of_labeled
+        self.fifty_percent_of_labeled=fifty_percent_of_labeled
 
     def get_patient_id(self,fileName):
         fileName=os.path.basename(fileName)
@@ -132,15 +133,16 @@ class GenerateTFRedord:
                 else:
                     images_without_label.append(i)
         
-        if is_train_tfrecord and self.percent_of_labeled>0:
+        if is_train_tfrecord and self.fifty_percent_of_labeled:
             num_images_with_label=len(images_with_label)
             num_images_without_label=len(images_without_label)
+            num_samples=min(num_images_with_label,num_images_without_label)
             
             if num_images_with_label<=num_images_without_label:
-                images_without_label=random.sample(images_without_label,int(num_images_with_label*((100-self.percent_of_labeled)/self.percent_of_labeled)))
+                images_without_label=random.sample(images_without_label,num_samples)
     
             if num_images_with_label>num_images_without_label:
-                images_with_label=random.sample(images_with_label,int(num_images_without_label*(self.percent_of_labeled/(100-self.percent_of_labeled))))
+                images_with_label=random.sample(images_with_label,num_samples)
           
         for i in images_without_label+images_with_label:
 
@@ -217,6 +219,6 @@ if __name__ == '__main__':
     outputDir = "../BrainTumourImages/Generated"
     number_of_volumes_to_process=500
     percent_for_validation=20
-    percent_of_labeled=50
-    generator = GenerateTFRedord(imagePathTR,labelPathTR,imagePathTS,outputDir,number_of_volumes_to_process,percent_for_validation,percent_of_labeled)
+    fifty_percent_of_labeled=True
+    generator = GenerateTFRedord(imagePathTR,labelPathTR,imagePathTS,outputDir,number_of_volumes_to_process,percent_for_validation,fifty_percent_of_labeled)
     generator.generate_tfrecords()
