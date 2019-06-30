@@ -172,10 +172,15 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
                         step_val=0
                         print('\n Step {}: Saving weights to {}'.format(step, model_checkpoint_path))
                         # initialize/reset the running variables of the IoU metrics
-                        sess.run(running_vars_initializer)
+                        if label_input_size>1: #OneHotEncoding
+                            sess.run(running_vars_initializer)
+                        
                         try:
                             while True:
-                                cost_valid, _ = sess.run([loss_op, IoU_metrics_update], feed_dict={handle: validation_handle,training_placeholder: False})
+                                if label_input_size>1: #OneHotEncoding
+                                    cost_valid, _ = sess.run([loss_op, IoU_metrics_update], feed_dict={handle: validation_handle,training_placeholder: False})
+                                else:
+                                    cost_valid = sess.run([loss_op], feed_dict={handle: validation_handle,training_placeholder: False})
                                 total_validation_loss.append(cost_valid)
                                 step_val += 1
                                 #print('\nValidation step: Epoch {}, batch {} -- Loss: {:.3f}'.format(epoch+1, step_val, cost_valid))
