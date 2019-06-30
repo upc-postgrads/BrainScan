@@ -8,7 +8,7 @@ import sys
 from utils import utils
 
 
-def main(trainingdir, model, num_epochs, size_batch_test, logdir, logdir_w perform_one_hot, binarize_labels):
+def main(trainingdir, model, num_epochs, size_batch_test, logdir, logdir_w, perform_one_hot, binarize_labels):
 
     global_step=tf.get_variable('global_step',dtype=tf.int32,initializer=0,trainable=False)
 
@@ -28,13 +28,14 @@ def main(trainingdir, model, num_epochs, size_batch_test, logdir, logdir_w perfo
     x.set_shape([None, 192, 192, 4])
     x = tf.cast(x, tf.float32)
 
+    training_placeholder = tf.placeholder(dtype=tf.bool, shape=[], name='training_placeholder')
 
     if model == "unet_keras":
         from models import unet_keras as model
-        logits, logits_soft = model.unet(x,False,label_output_size)
+        logits, logits_soft = model.unet(x,training_placeholder,label_output_size)
     elif model == "unet_tensorflow":
         from models import unet_tensorflow as model
-        logits, logits_soft = model.unet(x, training=False, norm_option=False,drop_val=0.5,label_output_size=label_output_size)
+        logits, logits_soft = model.unet(x, training=training_placeholder, norm_option=False,drop_val=0.5,label_output_size=label_output_size)
 
 
 
@@ -61,7 +62,8 @@ def main(trainingdir, model, num_epochs, size_batch_test, logdir, logdir_w perfo
 
         # Initialize Variables
         #restore_weights:
-        saver.restore(sess, tf.train.latest_checkpoint(logdir))
+        #saver.restore(sess, tf.train.latest_checkpoint(logdir))
+        saver.restore(sess, logdir)
         # else:
         # sess.run(tf.global_variables_initializer())
         # sess.run(tf.local_variables_initializer())
@@ -75,7 +77,7 @@ def main(trainingdir, model, num_epochs, size_batch_test, logdir, logdir_w perfo
         try:
             print("there")
             while True:
-                summary_val,logits_test = sess.run([summary_test,logits_soft],feed_dict={handle:test_handle})
+                summary_val,logits_test = sess.run([summary_test,logits_soft],feed_dict={handle:test_handle,training_placeholder: False})
                 writer.add_summary(summary_val)
 
         except tf.errors.OutOfRangeError:
