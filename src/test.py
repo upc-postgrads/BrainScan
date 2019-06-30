@@ -8,7 +8,7 @@ import sys
 from utils import utils
 
 
-def main(trainingdir, model, num_epochs, size_batch_test, logdir, perform_one_hot, binarize_labels):
+def main(trainingdir, model, num_epochs, size_batch_test, logdir, logdir_w perform_one_hot, binarize_labels):
 
     global_step=tf.get_variable('global_step',dtype=tf.int32,initializer=0,trainable=False)
 
@@ -47,9 +47,9 @@ def main(trainingdir, model, num_epochs, size_batch_test, logdir, perform_one_ho
     summary_test=tf.summary.merge_all()
 
     # op to write logs to Tensorboard
-    logdir = os.path.expanduser(logdir)
-    utils.ensure_dir(logdir)
-    writer = tf.summary.FileWriter(logdir, graph=tf.get_default_graph())
+    logdir_w = os.path.expanduser(logdir_w)
+    utils.ensure_dir(logdir_w)
+    writer = tf.summary.FileWriter(logdir_w, graph=tf.get_default_graph())
 
     # Weight saver
     model_checkpoint_path = os.path.join(logdir, 'Checkpoint')

@@ -7,6 +7,7 @@ import argparse
 #Training parameters
 TRAININGDIR = "C:/Users/nuria/Desktop/FinalProject/BrainTumour/Generated_TFRecords"
 LOGDIR = "C:/Users/nuria/Desktop/FinalProject/SavingWeights"
+LOGDIR_W = "Create a specific folder to hold the checkpoints for test"
 NUM_EPOCHS = 1
 BATCH_SIZE_TRAIN = 25
 BATCH_SIZE_TEST = 25
@@ -25,6 +26,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Pipeline execution')
     parser.add_argument('-t', '--trainingdir', default=TRAININGDIR, help='Location of the TFRecors for training')
     parser.add_argument('-l', '--logdir', default=LOGDIR, help='Log dir for tfevents')
+    parser.add_argument('-lw', '--logdir_w', default=LOGDIR_W, help='Log dir for tfevents')
     parser.add_argument('-e', '--num_epochs', type=int, default=NUM_EPOCHS, help='Number of epochs')
     parser.add_argument('-btr', '--size_batch_train', type=int, default=BATCH_SIZE_TRAIN, help='Batch size for training')
     parser.add_argument('-bts', '--size_batch_test', type=int, default=BATCH_SIZE_TEST, help='Batch size for testing')
@@ -52,4 +54,4 @@ if __name__ == '__main__':
     else:
         print("there")
         #we call the test function
-        test.main(args.trainingdir, args.model, args.num_epochs, args.size_batch_test, args.logdir, args.perform_one_hot, args.binarize_labels)
+        test.main(args.trainingdir, args.model, args.num_epochs, args.size_batch_test, args.logdir, args.logdir_w, args.perform_one_hot, args.binarize_labels)
