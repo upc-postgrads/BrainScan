@@ -8,15 +8,15 @@ import sys
 from utils import utils
 
 
-def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size_batch_valid, logdir,perform_one_hot,binarize_labels):
+def main(trainingdir, model, num_epochs, size_batch_test, logdir, perform_one_hot, binarize_labels):
 
     global_step=tf.get_variable('global_step',dtype=tf.int32,initializer=0,trainable=False)
 
-    train_list, valid_list, test_list = get_file_lists(trainingdir)
+    _, _, test_list = get_file_lists(trainingdir)
 
     label_input_size,label_output_size=get_tensor_size(perform_one_hot,binarize_labels)
 
-  
+
     test_dataset = create_dataset(filenames=test_list,mode="testing", num_epochs=1, batch_size=size_batch_test,perform_one_hot=perform_one_hot,binarize_labels=binarize_labels)
     test_iterator = test_dataset.make_initializable_iterator()
 
@@ -28,14 +28,13 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
     x.set_shape([None, 192, 192, 4])
     x = tf.cast(x, tf.float32)
 
-    training_placeholder = tf.placeholder(dtype=tf.bool, shape=[], name='training_placeholder')
 
     if model == "unet_keras":
         from models import unet_keras as model
-        logits, logits_soft = model.unet(x,training_placeholder,label_output_size)
+        logits, logits_soft = model.unet(x,False,label_output_size)
     elif model == "unet_tensorflow":
         from models import unet_tensorflow as model
-        logits, logits_soft = model.unet(x, training=training_placeholder, norm_option=False,drop_val=0.5,label_output_size=label_output_size)
+        logits, logits_soft = model.unet(x, training=False, norm_option=False,drop_val=0.5,label_output_size=label_output_size)
 
 
 
@@ -72,15 +71,14 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
 
 
         sess.run(test_iterator.initializer)
- 
+
         try:
             print("there")
             while True:
-                summary_val,logits_test = sess.run([summary_test,logits_soft],feed_dict={handle:test_handle,training_placeholder:False})
-                      
+                summary_val,logits_test = sess.run([summary_test,logits_soft],feed_dict={handle:test_handle})
                 writer.add_summary(summary_val)
 
         except tf.errors.OutOfRangeError:
             print("here")
-   
+
     return
