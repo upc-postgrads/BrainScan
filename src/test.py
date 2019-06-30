@@ -74,13 +74,12 @@ def main(trainingdir, model, num_epochs, size_batch_test, logdir, logdir_w, perf
         sess.run(test_iterator.initializer)
  
         try:
-            print("there")
             while True:
                 summary_val,logits_test = sess.run([summary_test,logits_soft],feed_dict={handle:test_handle,training_placeholder:False})
                       
                 writer.add_summary(summary_val)
 
         except tf.errors.OutOfRangeError:
-            print("here")
-   
+            pass
+            
     return
