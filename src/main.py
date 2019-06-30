@@ -13,7 +13,7 @@ BATCH_SIZE_VALID = 25
 STEP_METRICS = 100
 LEARNING_RATE = 1e-5
 STEPS_SAVER = 100
-MODEL_TO_USE = "unet_tensorflow"
+MODEL_TO_USE = "unet_keras"
 RESTORE_WEIGHTS=False
 PERFORM_ONE_HOT=True
 BINARIZE_LABELS=False
@@ -38,7 +38,7 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
 
-    print("Are we testing or training, True for training, False for testing")
+    print("Are we testing or training? True for training, False for testing")
     
     training = input('Enter your input:') 
     if training :
