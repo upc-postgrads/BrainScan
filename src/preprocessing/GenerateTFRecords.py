@@ -24,7 +24,7 @@ class GenerateTFRedord:
                        For validation files the resulting path will be: output_dir/Validation.
                        For test files the resulting path will be: output_dir/Test.
     :param number_of_volumes_to_process: The number of volumes to process. both for training, for testing.
-    :param percent_for_validation: Percentaje of the resulting images that will be reserved for validation.
+    :param percent_for_validation: Percentage of the resulting images that will be reserved for validation.
                                    Ej. If value is 10, then the 10% (random) of the TFRecords will be reserved for validation.
     :param fifty_percent_of_labeled:True/False
                         If True, then 50% of labeled images and 50% of non labeled are returned.
