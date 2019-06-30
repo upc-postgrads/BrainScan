@@ -29,20 +29,19 @@ If your target is one vector of values (0,1), use Sigmoid
  NO        NO            1            4            sparse_softmax_cross_entropy
 """
 
-def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size_batch_valid, step_metrics, steps_saver, learning_rate, logdir, restore_weights,perform_one_hot,binarize_labels):
+def main(trainingdir, model, num_epochs, size_batch_train, size_batch_valid, step_metrics, steps_saver, learning_rate, logdir, restore_weights, perform_one_hot, binarize_labels):
 
     global_step=tf.get_variable('global_step',dtype=tf.int32,initializer=0,trainable=False)
 
-    train_list, valid_list, test_list = get_file_lists(trainingdir)
+    train_list, valid_list, _ = get_file_lists(trainingdir)
 
     label_input_size,label_output_size=get_tensor_size(perform_one_hot,binarize_labels)
 
-    train_dataset = create_dataset(filenames=train_list,mode="training", num_epochs=1, batch_size=size_batch_train,perform_one_hot=perform_one_hot,binarize_labels=binarize_labels)
+    train_dataset = create_dataset(filenames=train_list,mode="training", num_epochs=1, batch_size=size_batch_train, perform_one_hot=perform_one_hot, binarize_labels=binarize_labels)
     train_iterator = train_dataset.make_initializable_iterator()
-    validation_dataset = create_dataset(filenames=valid_list,mode="validation", num_epochs=1, batch_size=size_batch_valid,perform_one_hot=perform_one_hot,binarize_labels=binarize_labels)
+    validation_dataset = create_dataset(filenames=valid_list,mode="validation", num_epochs=1, batch_size=size_batch_valid, perform_one_hot=perform_one_hot, binarize_labels=binarize_labels)
     validation_iterator = validation_dataset.make_initializable_iterator()
-    test_dataset = create_dataset(filenames=test_list,mode="testing", num_epochs=1, batch_size=size_batch_test,perform_one_hot=perform_one_hot,binarize_labels=binarize_labels)
-    test_iterator = test_dataset.make_initializable_iterator()
+
 
     # Feedable iterator assigns each iterator a unique string handle it is going to work on
     handle = tf.placeholder(tf.string, shape = [])
@@ -146,7 +145,7 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
 
         train_handle = sess.run(train_iterator.string_handle())
         validation_handle = sess.run(validation_iterator.string_handle())
-        test_handle = sess.run(test_iterator.string_handle())
+
 
         #training, validation and saving
         for epoch in range(num_epochs):
@@ -174,7 +173,7 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
                         # initialize/reset the running variables of the IoU metrics
                         if label_input_size>1: #OneHotEncoding
                             sess.run(running_vars_initializer)
-                        
+
                         try:
                             while True:
                                 if label_input_size>1: #OneHotEncoding
@@ -203,7 +202,7 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_test, size
 
                     #saving
                     if step % steps_saver == 0:
-                        print('\n Step {}\tSaving weights to {}'.format(step+1, model_checkpoint_path))
+                        print('\n Step {} Saving weights to {}'.format(step+1, model_checkpoint_path))
                         saver.save(sess, save_path=model_checkpoint_path,global_step=global_step)
 
             except tf.errors.OutOfRangeError:
