@@ -12,7 +12,7 @@ After having defined these helper blocks, then we execute the main function, whi
 1- First, it defines different "writers" with tf.python_io.TFRecordWriter for 3 different batches, which are training, validation and testing.<br /><br />
 2- Then we use the library Nibabel which is useful for transforming .NIFTI images into raw data.<br /><br />
 3- We slice this raw 3D data in smaller 2D images and we do it with the 4 volumes from only 1 patient, so that we end up with 155 * 4 images<br /><br />
-4- These images are parsed to become grayscale, discarted if they are fully black and stored in order in a list, which is later on converted into a nummpy array<br /><br />
+4- These images are parsed to become grayscale, discarted if they are fully black and stored in order in a list, which is later on converted into a numpy array<br /><br />
 5- We convert the labels into np.uint8<br /><br />
 6- After that we create a dictionary of keys and values from the attributes of this patient: image, label, PatientID,...etc with the tf.train.Example function<br /><br />
 7- Finally we convert some of the values of the dictionary from a list of bytes and int.64 to a tensor of bytes and int.64 respectively, with the tf.train.Feature(). The reason for this is that the tf.data.TFRecordDataset() function needs to receive data with this structure of tensors to work within the tensorflow framework<br /><br />
