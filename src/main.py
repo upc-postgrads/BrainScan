@@ -1,12 +1,13 @@
 import train
-import argparse
 import test
+import argparse
+
 
 
 #Training parameters
-TRAININGDIR = "/home/deivit/Desktop/dades/Documents/david/upc/AIDL/projecte/unet/BrainTumourImages/Generated_50-50"
-LOGDIR = '/tmp/aidl/current'
-NUM_EPOCHS = 1 
+TRAININGDIR = "C:/Users/nuria/Desktop/FinalProject/BrainTumour/Generated_TFRecords"
+LOGDIR = "C:/Users/nuria/Desktop/FinalProject/SavingWeights"
+NUM_EPOCHS = 1
 BATCH_SIZE_TRAIN = 25
 BATCH_SIZE_TEST = 25
 BATCH_SIZE_VALID = 25
@@ -35,21 +36,20 @@ if __name__ == '__main__':
     parser.add_argument('-m', '--model', default=MODEL_TO_USE,help='Model to use, either unet_keras or unet_tensorflow.')
     parser.add_argument('-oh', '--perform_one_hot', default=PERFORM_ONE_HOT,help='Perform on-hot encoding for labels.')
     parser.add_argument('-bi', '--binarize_labels', default=BINARIZE_LABELS,help='Perform binarization for labels.')
-    
+
     args = parser.parse_args()
 
-    print("Are we testing or training, True for training, False for testing")
-    
-    training = input('Enter your input:') 
+    print("Are we testing or training? True for training, False for testing")
+
+    training = input('Enter your input:')
     print(type(training))
     if training == "True" :
         print("here")
-    
-#we call the train function
-        train.main(args.trainingdir,args.model,args.num_epochs,args.size_batch_train,args.size_batch_test,args.size_batch_valid, args.step_metrics, args.steps_saver,args.learning_rate, args.logdir, args.restore_weights,args.perform_one_hot,args.binarize_labels)
-    
+
+        #we call the train function
+        train.main(args.trainingdir, args.model, args.num_epochs, args.size_batch_train, args.size_batch_valid, args.step_metrics, args.steps_saver, args.learning_rate, args.logdir, args.restore_weights,args.perform_one_hot,args.binarize_labels)
+
     else:
         print("there")
-        #we call the test function    
-        test.main(args.trainingdir,args.model,args.num_epochs,args.size_batch_train,args.size_batch_test,args.size_batch_valid, args.logdir,args.perform_one_hot,args.binarize_labels)
-
+        #we call the test function
+        test.main(args.trainingdir, args.model, args.num_epochs, args.size_batch_test, args.logdir, args.perform_one_hot, args.binarize_labels)
