@@ -1,7 +1,7 @@
 # BrainScan
 
 This project is the result of the final assignment from the UPC Postgraduate course in _Artificial Intelligence with Deep Learning_.
-It consists on implementing the U-net model for medical image segmentation, precisly for brain tumor segmentation.
+It consists on implementing the U-net model for medical image segmentation, precisely for brain tumor segmentation.
 
 ## Getting Started
 
