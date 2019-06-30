@@ -12,6 +12,8 @@ def unet(data, training=False, norm_option=False, drop_val=0.5,label_output_size
         sys.exit('Not a valid norm_option')
     if drop_val<0 or drop_val>1:
         sys.exit('Not a valid drop_val')
+        
+   
 
     #Downsampling path (Convolution layers)
     conv1 = tf.layers.conv2d(data, 64, [3,3], strides=[1,1], padding='SAME', kernel_initializer=tf.initializers.random_normal())
@@ -63,10 +65,8 @@ def unet(data, training=False, norm_option=False, drop_val=0.5,label_output_size
     if norm_option == True:
         conv_bottle_2 = tf.layers.batch_normalization(conv_bottle_2)
     conv_bottle_2 = tf.nn.relu(conv_bottle_2)
-    if training == True:
-        drop = tf.layers.dropout(conv_bottle_2, rate=drop_val)
-    else:
-        drop = conv_bottle_2
+    
+    drop = tf.cond(tf.equal(training, tf.constant(True)), lambda: tf.layers.dropout(conv_bottle_2, rate=drop_val), lambda: conv_bottle_2) 
     #Upsampling path (Deconvolutional layers)
     deconv1 = tf.layers.conv2d_transpose(drop, 1024, [2,2], strides=[2,2], padding='SAME', kernel_initializer=tf.initializers.random_normal(stddev=sqrt(2/(3*3*1024))))
     if norm_option == True:
