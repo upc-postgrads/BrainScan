@@ -44,8 +44,7 @@ def unet(inputs, training=False,label_output_size=1):
     merge9 = tf.keras.layers.concatenate([conv1,up9], axis = 3)
     conv9 = tf.keras.layers.Conv2D(64, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(merge9)
     conv9 = tf.keras.layers.Conv2D(64, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(conv9)
-    conv9 = tf.keras.layers.Conv2D(2, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal')(conv9)
-
+    
     conv10 = tf.keras.layers.Conv2D(label_output_size, 1)(conv9) 
     
     if label_output_size==1:
