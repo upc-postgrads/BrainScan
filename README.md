@@ -33,6 +33,8 @@ In the different experiments that we have carried out, different ways of express
 
 ### Testing
 
+In order to use the model, we have implemented the testing mode, where you can feed images to the model that it has never seen during training, and allows to see the model perform.
+
 Basically in order to test the model you would have to follow the next steps:
 ```
 python main.py
