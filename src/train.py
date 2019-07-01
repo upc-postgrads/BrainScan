@@ -22,11 +22,13 @@ If your targets are integers, use sparse_categorical_crossentropy.
         2
         3
 If your target is one vector of values (0,1), use Sigmoid
- OneHot  BinaryLabels  Layer Input Layer Output        Loss
- SI        SI            2            2            softmax_cross_entropy
- SI        NO            4            4            softmax_cross_entropy
- NO        SI            1            1            sigmoid_cross_entropy
- NO        NO            1            4            sparse_softmax_cross_entropy
+
+
+OneHot  BinaryLabels          Loss                   Layer Input Size     Layer Output Size      
+SI        SI          softmax_cross_entropy              2                    2            
+SI        NO          softmax_cross_entropy              4                    4            
+NO        SI          sigmoid_cross_entropy              1                    1            
+NO        NO          sparse_softmax_cross_entropy       1                    4            
 """
 
 def main(trainingdir, model, num_epochs, size_batch_train, size_batch_valid, step_metrics, steps_saver, learning_rate, logdir, restore_weights, perform_one_hot, binarize_labels):
@@ -169,12 +171,12 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_valid, ste
                         total_validation_loss = [] #list where we will store the loss at each batch
                         sess.run(validation_iterator.initializer)
                         step_val=0
-                        print('\n Step {}: Saving weights to {}'.format(step, model_checkpoint_path))
                         # initialize/reset the running variables of the IoU metrics
                         if label_input_size>1: #OneHotEncoding
                             sess.run(running_vars_initializer)
 
                         try:
+                            print('\nPerforming validation')
                             while True:
                                 if label_input_size>1: #OneHotEncoding
                                     cost_valid, _ = sess.run([loss_op, IoU_metrics_update], feed_dict={handle: validation_handle,training_placeholder: False})
