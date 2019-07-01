@@ -30,6 +30,19 @@ In the different experiments that we have carried out, different ways of express
 
 ### Testing
 
+Basically in order to test the model you would have to follow the next steps:
+```
+python main.py
+```
+"Are we testing or training? True for training, False for testing"
+```
+False
+```
+This will basically trigger the sequence of testing, which will take the dataset created specifically for testing and will feed it directly to the model to obtain the prediction with the accuracy obtain during the training phase.
+
+The outputs will be displayed onto the Tensorboard for easy checking with the input image.
+
+![data/Unet.jpg](data/Unet.jpg)
 
 ### References
 * https://github.com/zhixuhao/unet/blob/master/model.py
