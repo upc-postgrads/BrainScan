@@ -3,6 +3,9 @@
 This project is the result of the final assignment from the UPC Postgraduate course in _Artificial Intelligence with Deep Learning_.
 It consists on implementing the U-net model for medical image segmentation, precisely for brain tumor segmentation.
 
+![data/Unet.jpg](data/Unet.jpg)
+
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. For our model to work all of the dependencies are on the requirements.txt.
@@ -42,7 +45,6 @@ This will basically trigger the sequence of testing, which will take the dataset
 
 The outputs will be displayed onto the Tensorboard for easy checking with the input image.
 
-![data/Unet.jpg](data/Unet.jpg)
 
 ### References
 * https://github.com/zhixuhao/unet/blob/master/model.py
