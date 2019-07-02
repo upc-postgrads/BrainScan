@@ -23,7 +23,7 @@ After having defined these helper blocks, then we execute the main function, whi
 ### ExtractTFRecords.py
 
 
-Because we are working with a dataset in binary format we made this script to make sure the data is correctly processed to work with it later on. <br /><br />
+Because we are working with a dataset in binary format we made this script to make sure the data is correctly processed to work with it later on. <br />
 
 In the script, we begin by defining some functions that allow us to:<br />
 1- Save the image with the Image library<br />
