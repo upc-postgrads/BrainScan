@@ -42,5 +42,3 @@ The second way uses a tensorflow generator approach, which also uses tf.session:
 3- After this we run tf.session run of the variable "next_image_data" which returns a tensor with strings of bytes <br />
 4- We do all the needed conversions of these tensor strings<br />
 5- Finally we repeat the process in step 3 of method 1<br /><br />
-
-Done!
