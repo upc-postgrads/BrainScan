@@ -17,6 +17,28 @@ When creating the dataset, we carry out a central crop so as to keep the 80% of 
 It is worth noting that the construction of the dataset is customized by means of two different parameters: _perform_one_hot_ and _binarize_labels_. The former says whether we want the labels expressed using the one_hot encoding and the latter gives the option of binarizing the labels. This last part implies, as already mentioned in the README file of the repository, performing a binary classification between background and tumour.   
 
 
+## main.py
+
+This script is the one that we have to run so as to execute the _train.py_. In it, we have defined the different hyperparameters used along the already mentioned script. However, it is also possible to customize such values when calling the _main.py_. See the _argparse_ part so as to see how to introduce the different parameters.
+
+Basically in order to test the model you would have to follow the next steps:
+```
+python main.py
+```
+"Are we testing or training? True for training, False for testing"
+```
+False
+```
+Basically in order to train the model you would have to follow the next steps:
+```
+python main.py
+```
+"Are we testing or training? True for training, False for testing"
+```
+True
+```
+MODIFY
+
 ## train.py
 
 This function performs the segmentation itself. Let us now develop the different steps.
@@ -33,6 +55,13 @@ At this point, we run the session. We begin by inicializing the training iterato
 In addition, every _steps_saver_ batches of training images, we save the weights.
 
 
-## main.py
+## test.py
 
-This script is the one that we have to run so as to execute the _train.py_. In it, we have defined the different hyperparameters used along the already mentioned script. However, it is also possible to customize such values when calling the _main.py_. See the _argparse_ part so as to see how to introduce the different parameters.
+CODI EXPLANATION
+
+In order to use the model, we have implemented the testing mode, where you can feed images to the model that it has never seen during training, and allows to see the model perform.
+
+
+This will basically trigger the sequence of testing, which will take the dataset created specifically for testing and will feed it directly to the model to obtain the prediction with the accuracy obtain during the training phase.
+
+The outputs will be displayed onto the Tensorboard for easy checking with the input image.
