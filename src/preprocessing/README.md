@@ -21,7 +21,7 @@ After having defined these helper blocks, then we execute the main function, whi
 10- This generator will be called everytime we need a new batch in the dataset.py, which at the same time is called by the train.py file.<br /><br />
 
 ### ExtractTFRecords.py
-<br />
+
 
 Because we are working with a dataset in binary format we made this script to make sure the data is correctly processed to work with it later on. <br /><br />
 
