@@ -125,7 +125,7 @@ def main(trainingdir, model, num_epochs, size_batch_train, size_batch_valid, ste
 
     tf.summary.scalar("loss", loss_op)
     
-    tf.summary.histogram("logits_soft",logits)
+    tf.summary.histogram("logits_soft",logits_soft)
     tf.summary.histogram("logits",logits)        
 
     summary_op=tf.summary.merge_all()
