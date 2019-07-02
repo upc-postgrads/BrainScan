@@ -33,12 +33,17 @@ In the different experiments that we have carried out, different ways of express
 
 ### Implementation
 
+We have implemented intersection over union.
+
 ![data/metrics.jpg](data/metrics.jpg)
 
+We have trained on a GPU (1070ti) during 5 epochs on a total time of 6 hours. Find below the results in terms of loss.
 ![data/loss.jpg](data/loss.jpg)
 
-![data/train.jpg](data/train.jpg)
+Representation of the data on the tensoboard during a training session.
+![data/train.jpg](data/train.jpg)![data/test.jpg](data/test.jpg)
 
+Representation of the predictions during an inference session.
 ![data/test.jpg](data/test.jpg)
 
 
