@@ -10,7 +10,7 @@ In the script, we begin by defining some functions that allow us to:<br />
 After having defined these helper blocks, then we execute the main function, which does the following:
 <br /><br />
 1- First, it defines different "writers" with tf.python_io.TFRecordWriter for 3 different batches, which are training, validation and testing.<br />
-2- Then, we use the library Nibabel which is useful for transforming .NIFTI images into raw data.<br /><br />
+2- Then, we use the library Nibabel which is useful for transforming .NIFTI images into raw data.<br />
 3- We slice this raw 3D data in smaller 2D images and we do it with the 4 volumes from only 1 patient, so that we end up with 155 * 4 images.<br />
 4- These images are parsed to become grayscale, discarted if they are fully black and stored in order in a list, which is later on converted into a numpy array.<br />
 5- We convert the labels into np.uint8.<br />
@@ -27,9 +27,9 @@ Because we are working with a dataset in binary format we made this script to ma
 
 In the script, we begin by defining some functions that allow us to:<br />
 1- Save the image with the Image library<br />
-2- Parse the name of the file before the "."<br /><br />
+2- Parse the name of the file before the "."<br />
 
-After having defined these helper blocks we implement two different ways to extract and save the data:<br /><br />
+After having defined these helper blocks we implement two different ways to extract and save the data:<br />
 
 1- First we create an interator that goes through all the strings in the TFRecord key-value pairs from the dictionary "features"<br />
 2- From this dictionary we extract and reshape both frames and label, the last one in case we deal with the training set<br />
