@@ -31,21 +31,11 @@ On the other hand, the label of a patient is an image whose pixels can take valu
 In the different experiments that we have carried out, different ways of expressing the labels have been used. In some of them, we have regarded the labels as having one channel and taking values in the set {0, 1, 2, 3}, but, in some others, we expressed them using one-hot encoding, which implies that the labels had four channels. The main point of using the second approach is the fact that, when implementing the IoU metrics, the tensors should be represented using one-hot encoding. Another approach that we took was, instead of distinguishing between background and three different tumour tissues, we distinguished between background and tumour. That is, we performed a binary classification (at pixel level). It is worth noting that, when performing the binarization of the label, it can have two or one channels, depending on whether we are doing a one hot encoding or not respectively.
 
 
-### Testing
+### Implementation
 
-In order to use the model, we have implemented the testing mode, where you can feed images to the model that it has never seen during training, and allows to see the model perform.
+Photo Loss
 
-Basically in order to test the model you would have to follow the next steps:
-```
-python main.py
-```
-"Are we testing or training? True for training, False for testing"
-```
-False
-```
-This will basically trigger the sequence of testing, which will take the dataset created specifically for testing and will feed it directly to the model to obtain the prediction with the accuracy obtain during the training phase.
 
-The outputs will be displayed onto the Tensorboard for easy checking with the input image.
 
 
 ### References
