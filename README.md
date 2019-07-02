@@ -6,6 +6,13 @@ It consists on implementing the U-net model for medical image segmentation, prec
 ![data/Unet.jpg](data/Unet.jpg)
 
 
+## TEAM
+  https://github.com/endinet David García
+  https://github.com/NuriaSF Núria Sánchez 
+  https://github.com/A3itor Aitor Jara
+  https://github.com/EddieMG Eduard Mainou
+  https://github.com/santipuch590 Santi Puch (Advisor)
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. For our model to work all of the dependencies are on the requirements.txt.
@@ -52,3 +59,8 @@ Representation of the predictions during an inference session.
 * http://ronny.rest/blog/post_2017_09_11_tf_metrics/
 * https://arxiv.org/pdf/1505.04597.pdf
 * https://medium.com/ymedialabs-innovation/how-to-use-dataset-and-iterators-in-tensorflow-with-code-samples-3bb98b6b74ab
+* https://www.tensorflow.org
+* https://www.stackoverflow.com
+* https://github.com/upcschool-ai/2019-spring-project
+
+
