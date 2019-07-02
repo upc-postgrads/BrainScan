@@ -15,7 +15,7 @@ pip install -r requirements.txt
 ```
 
 ### Structure of the repository
-As we have already mentioned, the main goal was to implement the U-Net so as to perform image segmentation so as to identify the tumour. The part regarding the U-Net architecture can be found in the folder _models_ (inside _src_). On the other hand, _preprocessing_ (also in _src_) stores the scripts that deal with the already mentioned task of slicing and storing all the data. Finally, the scripts that actually perform the segmentation can also be found in the _src_ folder. In fact, such folder contains a README file which explais in detail its content.\
+As we have already mentioned, the main goal was to implement the U-Net so as to perform image segmentation so as to identify the tumour. The part regarding the U-Net architecture can be found in the folder _models_ (inside _src_). On the other hand, _preprocessing_ (also in _src_) stores the scripts that deal with the already mentioned task of slicing and storing all the data. Finally, the scripts that actually perform the segmentation can also be found in the _src_ folder. In fact, such folder contains a README file which explains in detail its content.\
 The other folder that can be seen from here is the _data_ one, which mainly stores images used along the repository and used to illustrate some of the results.
 
 
@@ -33,9 +33,13 @@ In the different experiments that we have carried out, different ways of express
 
 ### Implementation
 
-Photo Loss
+![data/metrics.jpg](data/metrics.jpg)
 
+![data/loss.jpg](data/loss.jpg)
 
+![data/train.jpg](data/train.jpg)
+
+![data/test.jpg](data/test.jpg)
 
 
 ### References
