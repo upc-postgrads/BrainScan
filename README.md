@@ -14,11 +14,11 @@ It consists on implementing the U-net model for medical image segmentation, prec
   https://github.com/EddieMG   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  &nbsp;&nbsp;&nbsp;  Eduard Mainou\
   https://github.com/santipuch590  &nbsp;&nbsp;&nbsp; Santi Puch (Advisor)
 
-  [David García] (https://github.com/endinet)   \
-    [Núria Sánchez](https://github.com/NuriaSF)  \
-      [Aitor Jara] (https://github.com/A3itor)\
-     [Eduard Mainou] (https://github.com/EddieMG)\
-    [Santi Puch] (https://github.com/santipuch590)(Advisor)
+  [David García](https://github.com/endinet)   \
+  [Núria Sánchez](https://github.com/NuriaSF)  \
+  [Aitor Jara](https://github.com/A3itor) \
+  [Eduard Mainou](https://github.com/EddieMG) \
+  [Santi Puch](https://github.com/santipuch590)(Advisor)
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. For our model to work all of the dependencies are on the requirements.txt.
