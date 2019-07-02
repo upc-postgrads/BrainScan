@@ -8,7 +8,7 @@ It consists on implementing the U-net model for medical image segmentation, prec
 
 ## TEAM
   https://github.com/endinet David García\
-  https://github.com/NuriaSF Núria Sánchez\\ 
+  https://github.com/NuriaSF Núria Sánchez\
   https://github.com/A3itor Aitor Jara\
   https://github.com/EddieMG Eduard Mainou\
   https://github.com/santipuch590 Santi Puch (Advisor)
