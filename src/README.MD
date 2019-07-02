@@ -19,7 +19,7 @@ It is worth noting that the construction of the dataset is customized by means o
 
 ## main.py
 
-This script is the one that we have to run so as to execute the _train.py_. In it, we have defined the different hyperparameters used along the already mentioned script. However, it is also possible to customize such values when calling the _main.py_. See the _argparse_ part so as to see how to introduce the different parameters.
+In it, we have defined the different hyperparameters used along the already mentioned script. However, it is also possible to customize such values when calling the _main.py_. See the _argparse_ part so as to see how to introduce the different parameters.
 
 Basically in order to test the model you would have to follow the next steps:
 ```
@@ -37,7 +37,6 @@ python main.py
 ```
 True
 ```
-MODIFY
 
 ## train.py
 
@@ -57,9 +56,9 @@ In addition, every _steps_saver_ batches of training images, we save the weights
 
 ## test.py
 
-CODI EXPLANATION
-
 In order to use the model, we have implemented the testing mode, where you can feed images to the model that it has never seen during training, and allows to see the model perform.
+
+CODE EXPLANATION
 
 
 This will basically trigger the sequence of testing, which will take the dataset created specifically for testing and will feed it directly to the model to obtain the prediction with the accuracy obtain during the training phase.
