@@ -50,7 +50,7 @@ We have trained on a GPU (1070ti) during 5 epochs on a total time of 6 hours. Fi
 ![data/loss.png](data/loss.png)
 
 Representation of the data on the tensoboard during a training session.
-![data/train44.jpg](data/train44.jpg)![data/train11.jpg](data/train11.jpg)
+![data/train44.png](data/train44.png)![data/train11.jpg](data/train11.jpg)
 
 Representation of the predictions during an inference session.
 ![data/test.jpg](data/test.jpg)
