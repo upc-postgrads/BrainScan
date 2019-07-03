@@ -42,7 +42,10 @@ def main(trainingdir, model, num_epochs, size_batch_test, logdir, logdir_w, perf
     ######################################## SUMMARIES #########################################################
 
     tf.summary.image('input_0',tf.expand_dims(x[:,:,:,0],axis=-1))
-    tf.summary.image('logits',tf.expand_dims(logits_soft[:,:,:,0],axis=-1))
+    if label_output_size==1:
+        tf.summary.image('prediction',tf.expand_dims(logits_soft[:,:,:,0],axis=-1))
+    elif label_output_size>1:
+        tf.summary.image("prediction", logits_soft[:,:,:,1:])
 
 
     summary_test=tf.summary.merge_all()
