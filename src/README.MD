@@ -19,24 +19,24 @@ It is worth noting that the construction of the dataset is customized by means o
 
 ## main.py
 
-In it, we have defined the different hyperparameters used along the already mentioned script. However, it is also possible to customize such values when calling the _main.py_. See the _argparse_ part so as to see how to introduce the different parameters.
-
-Basically in order to test the model you would have to follow the next steps:
+This script contains the commands so as to execute the _train.py_ and _test.py_ scripts. After running the _main.py_ by typing
 ```
 python main.py
 ```
-"Are we testing or training? True for training, False for testing"
-```
-False
-```
-Basically in order to train the model you would have to follow the next steps:
-```
-python main.py
+in the console, the user is going to be asked:
 ```
 "Are we testing or training? True for training, False for testing"
+```
+Then, in order to perform the training (that is, executing _train.py_), the user has to type
 ```
 True
 ```
+On the other hand, if they want to carry out the testing (that is, executing _test.py_), the user has to type
+```
+True
+```
+
+In _main.py_  we have defined the different hyperparameters used along the already mentioned scripts. However, it is also possible to customize such values when calling it. See the _argparse_ part so as to see how to introduce the different parameters.
 
 ## train.py
 
