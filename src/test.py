@@ -46,8 +46,7 @@ def main(trainingdir, model, num_epochs, size_batch_test, logdir, logdir_w, perf
         tf.summary.image('prediction',tf.expand_dims(logits_soft[:,:,:,0],axis=-1))
     elif label_output_size>1:
         tf.summary.image("prediction", logits_soft[:,:,:,1:])
-
-
+  
     summary_test=tf.summary.merge_all()
 
     # op to write logs to Tensorboard
