@@ -53,7 +53,7 @@ Representation of the data on the tensoboard during a training session.
 ![data/train44.png](data/train44.png)![data/train11.png](data/train11.png)
 
 Representation of the predictions during an inference session.
-![data/test.jpg](data/test.jpg)
+![data/test.jpg](data/test.jpg) ![data/test1.jpg](data/test1.jpg)
 
 
 ### References
