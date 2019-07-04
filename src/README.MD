@@ -58,9 +58,31 @@ In addition, every _steps_saver_ batches of training images, we save the weights
 
 In order to use the model, we have implemented the testing mode, where you can feed images to the model that it has never seen during training, and allows to see the model perform.
 
-CODE EXPLANATION
+```
+test_dataset = create_dataset(filenames=test_list,mode="testing", num_epochs=1, batch_size=size_batch_test,perform_one_hot=perform_one_hot,binarize_labels=binarize_labels)
+test_iterator = test_dataset.make_initializable_iterator()
+```
+We create the specific dataset and iterator for the testing.
+```
+handle = tf.placeholder(tf.string, shape = [])
+iterator = tf.data.Iterator.from_string_handle(handle, test_dataset.output_types, test_dataset.output_shapes)
+x, _ = iterator.get_next()
+```
+We modify the handler and just catch the image from the iterator.
+```
+saver.restore(sess, tf.train.latest_checkpoint(logdir))
+test_handle = sess.run(test_iterator.string_handle())
+sess.run(test_iterator.initializer)
+```
+We recover the weights from the training to inference the images and we initialize the iterator.
+```
+try:
+	while True:
+		summary_val,logits_test = sess.run([summary_test,logits_soft],feed_dict={handle: test_handle,training_placeholder:False})
+    writer.add_summary(summary_val)
 
+except tf.errors.OutOfRangeError:
+pass
+```
+Finally we feed the images through the model and catch the results to display them in the tensorboard.
 
-This will basically trigger the sequence of testing, which will take the dataset created specifically for testing and will feed it directly to the model to obtain the prediction with the accuracy obtain during the training phase.
-
-The outputs will be displayed onto the Tensorboard for easy checking with the input image.
