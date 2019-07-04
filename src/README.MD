@@ -79,7 +79,7 @@ We recover the weights from the training to inference the images and we initiali
 try:
 	while True:
 		summary_val,logits_test = sess.run([summary_test,logits_soft],feed_dict={handle: test_handle,training_placeholder:False})
-    writer.add_summary(summary_val)
+    		writer.add_summary(summary_val)
 
 except tf.errors.OutOfRangeError:
 pass
