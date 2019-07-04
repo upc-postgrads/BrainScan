@@ -84,3 +84,4 @@ The first row shows the raw image and the second one the predictions.
 * https://www.tensorflow.org/guide/datasets
 * https://github.com/zhixuhao/unet/blob/master/model.py
 * https://github.com/upcschool-ai/2019-spring-project
+* https://invkrh.me/2019/03/11/tensorflow-specialization-learning-note/
