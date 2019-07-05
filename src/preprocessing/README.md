@@ -19,6 +19,7 @@ After having defined these helper blocks, then we execute the main function, whi
 8- Finally, everything is done in 3 differents loops, one for every batch type (training, validation and test), that parse all the patients.<br />
 9- At the end, the batch size of the training and validation sets respecitvely, will depend on the % of patients that we want to keep for validating purposes.<br />
 10- This generator will be called everytime we need a new batch in the dataset.py, which at the same time is called by the train.py file.<br /><br />
+Users need to modify the paths at the end of the file based on their local paths
 
 ### ExtractTFRecords.py
 
