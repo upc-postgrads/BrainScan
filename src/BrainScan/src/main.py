@@ -5,18 +5,18 @@ import argparse
 
 
 #Training parameters
-TRAININGDIR = "/Volumes/Macintosh_SSD_Samsung_EVO_256_GB/BrainTumourImages/Generated"
-LOGDIR = "/Volumes/Macintosh_SSD_Samsung_EVO_256_GB/BrainTumourImages/logdir/current"
-LOGDIR_W = "/Volumes/Macintosh_SSD_Samsung_EVO_256_GB/BrainTumourImages/logdir/try_test"
+TRAININGDIR = "Macintosh_SSD_Samsung_EVO_256_GB/BrainTumourImages/Generated"
+LOGDIR = "Macintosh_SSD_Samsung_EVO_256_GB/BrainTumourImages/logdir/current"
+LOGDIR_W = "Macintosh_SSD_Samsung_EVO_256_GB/BrainTumourImages/logdir/try_test"
 NUM_EPOCHS = 1
-BATCH_SIZE_TRAIN = 1
+BATCH_SIZE_TRAIN = 25
 BATCH_SIZE_TEST = 25
 BATCH_SIZE_VALID = 25
 STEP_METRICS = 100
 LEARNING_RATE = 1e-5
-STEPS_SAVER = 100
+STEPS_SAVER = 10
 MODEL_TO_USE = "unet_keras"
-RESTORE_WEIGHTS=False
+RESTORE_WEIGHTS=True
 PERFORM_ONE_HOT=True
 BINARIZE_LABELS=False
 
