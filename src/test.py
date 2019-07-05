@@ -64,7 +64,7 @@ def main(trainingdir, model, num_epochs, size_batch_test, logdir, logdir_w, perf
 
         # Initialize Variables
         #restore_weights:
-        saver.restore(sess, tf.train.latest_checkpoint(logdir)
+        saver.restore(sess, tf.train.latest_checkpoint(logdir))
 
         test_handle = sess.run(test_iterator.string_handle())
 
