@@ -16,7 +16,7 @@ def main(trainingdir, model, num_epochs, size_batch_test, logdir, logdir_w, perf
 
     label_input_size,label_output_size=get_tensor_size(perform_one_hot,binarize_labels)
 
-  
+
     test_dataset = create_dataset(filenames=test_list,mode="testing", num_epochs=1, batch_size=size_batch_test,perform_one_hot=perform_one_hot,binarize_labels=binarize_labels)
     test_iterator = test_dataset.make_initializable_iterator()
 
@@ -46,7 +46,7 @@ def main(trainingdir, model, num_epochs, size_batch_test, logdir, logdir_w, perf
         tf.summary.image('prediction',tf.expand_dims(logits_soft[:,:,:,0],axis=-1))
     elif label_output_size>1:
         tf.summary.image("prediction", logits_soft[:,:,:,1:])
-  
+
     summary_test=tf.summary.merge_all()
 
     # op to write logs to Tensorboard
@@ -64,20 +64,20 @@ def main(trainingdir, model, num_epochs, size_batch_test, logdir, logdir_w, perf
 
         # Initialize Variables
         #restore_weights:
-        saver.restore(sess, tf.train.latest_checkpoint(logdir)
+        saver.restore(sess, tf.train.latest_checkpoint(logdir))
 
         test_handle = sess.run(test_iterator.string_handle())
 
 
         sess.run(test_iterator.initializer)
- 
+
         try:
             while True:
                 summary_val,logits_test = sess.run([summary_test,logits_soft],feed_dict={handle:test_handle,training_placeholder:False})
-                      
+
                 writer.add_summary(summary_val)
 
         except tf.errors.OutOfRangeError:
             pass
-            
+
     return
