@@ -25,7 +25,7 @@ PyDICOM==1.2.2
 six==1.10
 sphinx==2.1.0
 tensorboard==1.15.0
-tensorflow==1.15.0
+tensorflow==2.5.1
 tensorflow-estimator==1.15.0
 termcolor==1.1.0
 werkzeug==0.15.3
