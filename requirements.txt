@@ -20,7 +20,7 @@ numpy==1.16.4
 opencv-python==4.2.0.32 
 pandas==0.24.2
 pillow==8.3.2
-protobuf==3.7.1
+protobuf==3.15.0
 PyDICOM==1.2.2
 six==1.10
 sphinx==2.1.0
