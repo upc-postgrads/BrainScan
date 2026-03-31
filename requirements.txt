@@ -21,7 +21,7 @@ opencv-python==4.2.0.32
 pandas==0.24.2
 pillow==9.3.0
 protobuf==5.29.6
-PyDICOM==1.2.2
+PyDICOM==2.4.5
 six==1.10
 sphinx==2.1.0
 tensorboard==1.15.0
