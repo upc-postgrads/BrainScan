@@ -5,7 +5,7 @@ enum34==1.1.6
 funcsigs==1.0.2
 gast==0.2.2
 glob3==0.0.1
-grpcio==1.20.1
+grpcio==1.53.2
 h5py==2.9.0
 imageio==2.5.0
 ipykernel==5.1.1 #need to run this: ipython kernel install --user --name=env
